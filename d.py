@@ -77,15 +77,18 @@ WHERE e.mgr = m.emp_no;
  
 
 
-Join Type	Description	Matching Type	Missing Rows?
-Equi Join	Matches equal columns	=	Excluded
-Non-Equi Join	Matches range	BETWEEN, <, >	Excluded
-Self Join	Table with itself	=	—
-Cross Join	Every row with every row	none	—
-Inner Join	Only matches	=	Excluded
-Left Outer Join	All from left, matched from right	=	Right side may show NULL
-Right Outer Join	All from right, matched from left	=	Left side may show NULL
-Full Outer Join	All from both	=	None excluded
+| Join Type            | Description                       | Matching Type       | Missing Rows?            |
+| -------------------- | --------------------------------- | ------------------- | ------------------------ |
+| **Equi Join**        | Matches equal columns             | `=`                 | Excluded                 |
+| **Non-Equi Join**    | Matches range                     | `BETWEEN`, `<`, `>` | Excluded                 |
+| **Self Join**        | Table with itself                 | `=`                 | —                        |
+| **Cross Join**       | Every row with every row          | none                | —                        |
+| **Inner Join**       | Only matches                      | `=`                 | Excluded                 |
+| **Left Outer Join**  | All from left, matched from right | `=`                 | Right side may show NULL |
+| **Right Outer Join** | All from right, matched from left | `=`                 | Left side may show NULL  |
+| **Full Outer Join**  | All from both                     | `=`                 | None excluded            |
+
 
 
       ''')
+
