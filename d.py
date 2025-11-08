@@ -89,8 +89,9 @@ WHERE e.mgr = m.emp_no;
 | **Full Outer Join**  | All from both                     | `=`                 | None excluded            |
 
 
-hi bhags i see you !!
+
 
       ''')
+
 
 
