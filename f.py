@@ -3,17 +3,17 @@ print(
 CHARACTER FUNCTIONS
 | Function                           | Description                                        | Example Query                                            | Example Output  |
 | ---------------------------------- | -------------------------------------------------- | -------------------------------------------------------- | --------------- |
-| `LOWER(string)`                    | Converts string to lowercase                       | `SELECT LOWER('SIVA') FROM dual;`                        | `siva`          |
-| `UPPER(string)`                    | Converts string to uppercase                       | `SELECT UPPER('siva') FROM dual;`                        | `SIVA`          |
-| `INITCAP(string)`                  | Capitalizes first letter of each word              | `SELECT INITCAP('d m siva') FROM dual;`                  | `D M Siva`      |
-| `LENGTH(string)`                   | Returns number of characters                       | `SELECT LENGTH('Siva') FROM dual;`                       | `4`             |
-| `SUBSTR(string, m, n)`             | Returns substring from position `m` for length `n` | `SELECT SUBSTR('Siva',2,2) FROM dual;`                   | `iv`            |
+| `LOWER(string)`                    | Converts string to lowercase                       | `SELECT LOWER('salaar') FROM dual;`                        | `salaar`          |
+| `UPPER(string)`                    | Converts string to uppercase                       | `SELECT UPPER('salaar') FROM dual;`                        | `salaar`          |
+| `INITCAP(string)`                  | Capitalizes first letter of each word              | `SELECT INITCAP('d m salaar') FROM dual;`                  | `D M salaar`      |
+| `LENGTH(string)`                   | Returns number of characters                       | `SELECT LENGTH('salaar') FROM dual;`                       | `4`             |
+| `SUBSTR(string, m, n)`             | Returns substring from position `m` for length `n` | `SELECT SUBSTR('salaar',2,2) FROM dual;`                   | `iv`            |
 | `INSTR(string, substring)`         | Returns position of substring                      | `SELECT INSTR('DataScience','Sci') FROM dual;`           | `5`             |
-| `LPAD(string, len, pad_char)`      | Pads left side with given character                | `SELECT LPAD('Siva',8,'*') FROM dual;`                   | `****Siva`      |
-| `RPAD(string, len, pad_char)`      | Pads right side                                    | `SELECT RPAD('Siva',8,'*') FROM dual;`                   | `Siva****`      |
-| `LTRIM(string, chars)`             | Removes characters from left                       | `SELECT LTRIM('***Siva','*') FROM dual;`                 | `Siva`          |
-| `RTRIM(string, chars)`             | Removes characters from right                      | `SELECT RTRIM('Siva***','*') FROM dual;`                 | `Siva`          |
-| `TRIM(chars FROM string)`          | Removes characters from both ends                  | `SELECT TRIM('*' FROM '*Siva*') FROM dual;`              | `Siva`          |
+| `LPAD(string, len, pad_char)`      | Pads left side with given character                | `SELECT LPAD('salaar',8,'*') FROM dual;`                   | `****salaar`      |
+| `RPAD(string, len, pad_char)`      | Pads right side                                    | `SELECT RPAD('salaar',8,'*') FROM dual;`                   | `salaar****`      |
+| `LTRIM(string, chars)`             | Removes characters from left                       | `SELECT LTRIM('***salaar','*') FROM dual;`                 | `salaar`          |
+| `RTRIM(string, chars)`             | Removes characters from right                      | `SELECT RTRIM('salaar***','*') FROM dual;`                 | `salaar`          |
+| `TRIM(chars FROM string)`          | Removes characters from both ends                  | `SELECT TRIM('*' FROM '*salaar*') FROM dual;`              | `salaar`          |
 | `REPLACE(string, search, replace)` | Replaces occurrences of a substring                | `SELECT REPLACE('SQL LAB','LAB','PRACTICAL') FROM dual;` | `SQL PRACTICAL` |
 | `CONCAT(str1, str2)`               | Concatenates two strings                           | `SELECT CONCAT('Hello','World') FROM dual;`              | `HelloWorld`    |
 
@@ -56,7 +56,8 @@ ________________________________________
 | `NVL(expr1, expr2)`                 | Replaces NULL with given value       | `SELECT NVL(comm,0) FROM emp28;`                 | If `comm=NULL` → `0`  |
 | `NVL2(expr1, expr2, expr3)`         | If expr1 not NULL → expr2 else expr3 | `SELECT NVL2(comm,'Yes','No') FROM emp28;`       | If `comm=NULL` → `No` |
 | `NULLIF(expr1, expr2)`              | Returns NULL if expr1 = expr2        | `SELECT NULLIF(10,10) FROM dual;`                | `NULL`                |
-| `COALESCE(expr1, expr2, expr3,...)` | Returns first non-NULL value         | `SELECT COALESCE(NULL, NULL, 'Siva') FROM dual;` | `Siva`                |
+| `COALESCE(expr1, expr2, expr3,...)` | Returns first non-NULL value         | `SELECT COALESCE(NULL, NULL, 'salaar') FROM dual;` | `salaar`                |
 
 '''
+
 )
