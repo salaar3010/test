@@ -154,7 +154,7 @@ PL SQL
 1.
 SET SERVEROUTPUT ON;
 BEGIN
-   DBMS_OUTPUT.PUT_LINE('Hello Siva, welcome to PL/SQL!');
+   DBMS_OUTPUT.PUT_LINE('Hello salaar, welcome to PL/SQL!');
 END;
 /
 
@@ -164,7 +164,7 @@ DECLARE
    name VARCHAR2(20);
    salary NUMBER(8,2);
 BEGIN
-   name := 'Siva';
+   name := 'salaar';
    salary := 85000;
    DBMS_OUTPUT.PUT_LINE('Name: ' || name);
    DBMS_OUTPUT.PUT_LINE('Salary: ' || salary);
@@ -397,4 +397,5 @@ END;
 
 
 '''
+
 )
