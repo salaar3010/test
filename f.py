@@ -5,7 +5,7 @@ CHARACTER FUNCTIONS
 | ---------------------------------- | -------------------------------------------------- | -------------------------------------------------------- | --------------- |
 | `LOWER(string)`                    | Converts string to lowercase                       | `SELECT LOWER('salaar') FROM dual;`                        | `salaar`          |
 | `UPPER(string)`                    | Converts string to uppercase                       | `SELECT UPPER('salaar') FROM dual;`                        | `salaar`          |
-| `INITCAP(string)`                  | Capitalizes first letter of each word              | `SELECT INITCAP('d m salaar') FROM dual;`                  | `D M salaar`      |
+| `INITCAP(string)`                  | Capitalizes first letter of each word              | `SELECT INITCAP('D R salaar') FROM dual;`                  | `D R salaar`      |
 | `LENGTH(string)`                   | Returns number of characters                       | `SELECT LENGTH('salaar') FROM dual;`                       | `4`             |
 | `SUBSTR(string, m, n)`             | Returns substring from position `m` for length `n` | `SELECT SUBSTR('salaar',2,2) FROM dual;`                   | `iv`            |
 | `INSTR(string, substring)`         | Returns position of substring                      | `SELECT INSTR('DataScience','Sci') FROM dual;`           | `5`             |
@@ -61,3 +61,4 @@ ________________________________________
 '''
 
 )
+
