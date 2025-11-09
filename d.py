@@ -110,20 +110,20 @@ NOT IN, NOT EXISTS, != ALL	Opposites of above	Exclusion filters	Same as above
 
 Views
 
-✅ Definition:
+ Definition:
 A VIEW is a virtual table based on the result of a SQL query.
 It doesn’t store data itself — it just shows data from one or more base tables.
-💬 Think of it like:
+ Think of it like:
 “A saved SQL query that behaves like a table.”
 
-1. ✅ Syntax
+1.  Syntax
 
 CREATE OR REPLACE VIEW view_name AS
 SELECT columns
 FROM table_name
 WHERE condition;
 
-🧩 2. Example: Simple View
+ 2. Example: Simple View
 Task:
 Create a view to display employee name, department name, and salary.
 
@@ -399,3 +399,4 @@ END;
 '''
 
 )
+
