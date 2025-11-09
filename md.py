@@ -141,7 +141,7 @@ db.orderdetails.insertMany([
 3. Display Collection
 db.orderdetails.find().pretty()
 ________________________________________
-⚙️ Index Operations
+ Index Operations
 4. Create Unique Index on orderID
 db.orderdetails.createIndex(
     { orderID: 1 },
@@ -173,6 +173,7 @@ db.orderdetails.find().sort({ orderID: -1 }).pretty()
 11. Get Indexes and Display Collection
 db.orderdetails.getIndexes()
 db.orderdetails.find().pretty()
+
 
 
 ''')
