@@ -1,13 +1,13 @@
 """
 
-# ✅ FUNCTIONS
+#  FUNCTIONS
 def add(a,b=0): return a+b
 def fact(n): return 1 if n==0 else n*fact(n-1)
 square = lambda x: x*x
 def test(*args, **kwargs): pass
 
 
-# ✅ DECORATORS & WRAPPERS
+#  DECORATORS & WRAPPERS
 def deco(func):
     def wrapper():
         print("Start")
@@ -20,7 +20,7 @@ def greet(): print("Hello")
 greet()
 
 
-# ✅ CLASSES & OBJECTS
+#  CLASSES & OBJECTS
 class Student:
     def __init__(self,name,marks):
         self.name=name; self.marks=marks
@@ -36,7 +36,7 @@ class Dog(Animal):
 Dog().speak()
 
 
-# ✅ NUMPY QUICK REFERENCE
+#  NUMPY QUICK REFERENCE
 import numpy as np
 
 a=np.array([1,2,3])
@@ -51,14 +51,14 @@ np.random.randint(1,10,(2,2))
 np.linalg.inv(b); np.linalg.det(b)
 
 
-# ✅ 2D / 3D / 4D ARRAYS
+#  2D / 3D / 4D ARRAYS
 a2=np.arange(9).reshape(3,3)
 a3=np.arange(24).reshape(2,3,4)
 a4=np.random.randint(1,10,(2,2,2,2))
 a2[:,0]; a3[1,:,:]; a4[0,1,:,:]
 
 
-# ✅ MATPLOTLIB
+#  MATPLOTLIB
 import matplotlib.pyplot as plt
 
 x=np.arange(0,10,0.1); y=np.sin(x)
@@ -75,7 +75,7 @@ fig,ax=plt.subplots(2,2)
 ax[0,0].plot(x,y)
 
 
-# ✅ 2D / 3D Visualization
+# 2D / 3D Visualization
 plt.imshow(np.random.randint(0,10,(5,5)),cmap='viridis')
 plt.colorbar()
 
@@ -88,7 +88,7 @@ ax.plot_surface(X,Y,Z,cmap='plasma')
 plt.show()
 
 
-# ✅ PANDAS
+# PANDAS
 import pandas as pd
 
 s=pd.Series([10,20,30],index=['a','b','c'])
@@ -101,7 +101,7 @@ df.groupby('Name')['Age'].mean()
 df.fillna(0); df.dropna()
 
 
-# ✅ SCIPY
+#  SCIPY
 from scipy import stats, linalg, integrate
 
 data=[1,2,3,4,5]
@@ -115,7 +115,7 @@ res=integrate.quad(lambda x: x**2,0,2)
 print(res)
 
 
-# ✅ COMMON EXAM PROGRAMS
+#  COMMON EXAM PROGRAMS
 def fib(n):
     a,b=0,1
     for _ in range(n):
@@ -145,7 +145,7 @@ for i in range(3,50,2):
     if is_prime(i) and is_prime(i+2): print(i,i+2)
 
 
-# ✅ STRING & PATTERN QUICKIES
+#  STRING & PATTERN QUICKIES
 s=input("Enter:")
 print(s[::-1])
 print(sorted(s))
@@ -159,7 +159,7 @@ for i in range(7):
     print()
 
 
-# ✅ PACKAGES / MODULES
+# PACKAGES / MODULES
 # Folder structure:
 # mathe/
 #  ├── __init__.py
@@ -182,7 +182,7 @@ print(add.add_lists(a,b))
 print(mult.mult_lists(a,b))
 
 
-# ✅ QUICK REMINDERS
+#  QUICK REMINDERS
 # np.arange() → create ranges
 # plt.subplots() → multiple plots
 # pd.DataFrame() → tabular data
@@ -191,3 +191,4 @@ print(mult.mult_lists(a,b))
 # self → refers to current object in class
 
 """
+
