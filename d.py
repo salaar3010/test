@@ -396,7 +396,35 @@ END;
 /
 
 
+PL FUNCTIONS
+
+Basic Syntax
+
+CREATE OR REPLACE FUNCTION function_name (parameter_list)
+RETURN datatype
+IS
+   -- Variable declarations
+BEGIN
+   -- Executable statements
+   RETURN value;
+EXCEPTION
+   -- Error handling (optional)
+END function_name;
+/
+
+Example 1 — Simple Function (Add Two Numbers)
+CREATE OR REPLACE FUNCTION add_numbers(a NUMBER, b NUMBER)
+RETURN NUMBER
+IS
+   sum_result NUMBER;
+BEGIN
+   sum_result := a + b;
+   RETURN sum_result;
+END;
+/
+
 '''
 
 )
+
 
