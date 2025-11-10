@@ -176,4 +176,13 @@ db.orderdetails.find().pretty()
 
 
 
+Mongo Notes
+
+$ne – not equal to 
+$in – in membership 
+$lt – less then
+$gt – greater then
+
+
 ''')
+
