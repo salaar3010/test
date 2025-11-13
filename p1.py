@@ -303,6 +303,18 @@ ax.set_xlabel('X-axis')
 ax.set_ylabel('Y-axis')
 ax.set_zlabel('Z-axis')
 ________________________________________
+from scipy import stats
+import  matplotlib.pyplot as plt 
+import numpy as np
+#linear regression
+x =np.array( [1,2,3])
+y = [5,7,9]
+
+res = stats.linregress(x,y)
+plt.plot(x,y,'o')
+plt.plot(x,res.slope*x + res.intercept,'r')
+plt.show()
+#stats
 
 
 '''
