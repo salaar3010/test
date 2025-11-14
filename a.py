@@ -147,4 +147,37 @@ if goal in order:
     plot_collaboration_graph(G, path)
 
 
+#for caculating distance
+import networkx as nx
+import matplotlib.pyplot as plt
+import math
+
+hubs = {
+    "A": (12.9716, 77.5946),
+    "B": (13.0827, 80.2027),
+    "C": (11.0168, 76.9558),
+    "D": (9.9252, 78.1198),
+    "E": (17.3850, 78.1198),
+    "F": (15.8281, 78.0373),
+    "G": (10.7905, 78.7047)
+}
+
+def euclidean(lat1, lon1, lat2, lon2):
+    return math.sqrt((lat1 - lat2)**2 + (lon1 - lon2)**2)
+
+G = nx.Graph()
+
+# Add nodes + weighted edges
+for h1 in hubs:
+    for h2 in hubs:
+        if h1 != h2:
+            (lat1, lon1) = hubs[h1]
+            (lat2, lon2) = hubs[h2]
+            dist = euclidean(lat1, lon1, lat2, lon2)
+            G.add_edge(h1, h2, weight=dist)
+
+pos = nx.spring_layout(G)
+nx.draw(G, pos, with_labels=True, node_color="lightblue")
+plt.show()
+
 
