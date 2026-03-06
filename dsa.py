@@ -1,4 +1,49 @@
 '''
+Experiment - 1
+
+# Fibonacci using loop
+n = int(input("Enter number of terms: "))
+
+a = 0
+b = 1
+
+for i in range(n):
+    print(a, end=" ")
+    c = a + b
+    a = b
+    b = c
+
+# Fibonacci using recursion
+def fib(n):
+    if n <= 1:
+        return n
+    else:
+        return fib(n-1) + fib(n-2)
+
+n = int(input("Enter number of terms: "))
+
+for i in range(n):
+    print(fib(i), end=" ")
+
+# Factorial using loop
+n = int(input("Enter a number: "))
+
+fact = 1
+for i in range(1, n+1):
+    fact = fact * i
+
+print("Factorial:", fact)
+
+# Factorial using recursion
+def fact(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * fact(n-1)
+
+n = int(input("Enter a number: "))
+print("Factorial:", fact(n))
+
 
 Experiment – 2
 class StaticArray:
@@ -532,6 +577,7 @@ while arr:
     sorted_arr.append(heapq.heappop(arr))
 
 print(sorted_arr)
+
 
 
 '''
