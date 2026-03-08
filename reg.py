@@ -275,5 +275,80 @@
  ols_vif_tol(model)  
  ols_eigen_cindex(model)  
 
+#Experiment 8
 
+dat=ggplot2::mpg
+head(dat)
+
+hwy=dat$hwy
+summary(hwy)
+
+dat_min=min(dat$hwy)
+dat_min
+
+dat_max=max(dat$hwy)
+dat_max
+
+hist(hwy,xlab="hwy",main="Histogram of  hwy",breaks=sqrt(nrow(dat)))
+
+boxplot(dat$hwy,ylab = "hwy")
+mtext(paste("Outliers:", paste(out, collapse = ", ")))
+out=boxplot.stats(dat$hwy)$out
+
+out_ind=which(dat$hwy %in% c(out))
+out_ind
+
+dat[out_ind,]
+
+
+data("mtcars")
+head("mtcars")
+
+model =lm(mpg ~ disp+wt , data = mtcars)
+
+library(lmtest)
+dwtest(model)
+
+
+
+model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+k1=ols_step_all_possible(model)
+k1
+
+plot(k1)
+
+model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+k2=ols_step_best_subset(model)
+k2
+plot(k2)
+
+model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ k3=ols_step_forward_p(model, details = T)
+ k3
+plot(k3)
+
+ model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ k4=ols_step_backward_p(model, details = T)
+k4
+
+ model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ k5=ols_step_both_p(model, details = T)
+k5
+plot(k5)
+
+ model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ k6=ols_step_forward_aic(model, details = T)
+ k6
+ plot(k6)
+
+model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ k7=ols_step_backward_aic(model, details = T)
+ k7
+ plot(k7)
+
+ model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ k8=ols_step_both_aic(model, details = T)
+ k8
+ plot(k8)
+ 
 '''
