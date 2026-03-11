@@ -251,4 +251,99 @@ upper_array= np.array(Diabetes_df['bmi'] >= upper)
 lower_array= np.array(Diabetes_df['bmi'] <= lower)
 
 Diabetes_df.drop(index=upper_array,inplace=True)
+
 Diabetes_df.drop(index=lower_array,inplace=True)
+
+
+import requests
+
+def get_posts():
+    
+    # Define the API endpoint
+    url = "https://jsonplaceholder.typicode.com/posts"
+    
+    # Make the GET request to the API
+    response = requests.get(url)
+    
+    # Check if the request was successful
+    if response.status_code == 200:
+        
+        # Parse the JSON response
+        posts = response.json()
+        
+        # Extract relevant information
+        for post in posts:
+            print(f"Post ID: {post['id']}")
+            print(f"Title: {post['title']}")
+            print(f"Content: {post['body']}\n")
+    
+    else:
+        # Handle errors
+        print(f"Error: {response.status_code} - {response.text}")
+
+# Example usage
+get_posts()
+
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+# URL of the target website
+url = "http://books.toscrape.com/catalogue/category/books_1/index.html"
+
+# Send HTTP request
+response = requests.get(url)
+
+# Check request status
+if response.status_code == 200:
+    print("Page fetched successfully!")
+else:
+    print("Failed to fetch page:", response.status_code)
+
+# Parse HTML
+soup = BeautifulSoup(response.text, "html.parser")
+
+# Lists to store data
+titles = []
+prices = []
+ratings = []
+
+# Find all book containers
+books = soup.find_all("article", class_="product_pod")
+
+# Extract information
+for book in books:
+    
+    # Title
+    title = book.h3.a["title"]
+    titles.append(title)
+
+    # Price
+    price = book.find("p", class_="price_color").text
+    prices.append(price)
+
+    # Rating
+    rating = book.p["class"][1]
+    ratings.append(rating)
+
+# Display extracted data
+for i in range(len(titles)):
+    print("Title:", titles[i])
+    print("Price:", prices[i])
+    print("Rating:", ratings[i])
+    print("---------------------")
+
+# Store data in DataFrame
+data = {
+    "Title": titles,
+    "Price": prices,
+    "Rating": ratings
+}
+
+df = pd.DataFrame(data)
+
+# Save to CSV
+df.to_csv("books_data.csv", index=False)
+
+print("Data saved to books_data.csv")
