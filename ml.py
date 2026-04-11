@@ -195,3 +195,67 @@ plt.ylabel('Cumulative Explained Variance Ratio')
 plt.title("Cumulative Variance Ratio vs Number of Principal Components")
 plt.show()
 
+#confusion matrix
+# Import libraries
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
+
+# Actual and Predicted values
+y_true = ['Cat','Cat','Dog','Dog','Horse','Horse','Cat','Dog','Horse','Cat']
+y_pred = ['Cat','Dog','Dog','Dog','Horse','Cat','Cat','Dog','Horse','Horse']
+
+# Class labels
+classes = ['Cat', 'Dog', 'Horse']
+
+# Create confusion matrix
+cm = confusion_matrix(y_true, y_pred, labels=classes)
+
+# Display confusion matrix
+disp = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels=classes)
+disp.plot(cmap=plt.cm.Blues)
+
+# Labels and title
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
+
+# Classification report
+print("Classification Report:\n")
+print(classification_report(y_true, y_pred))
+
+#k-means clustering
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+x=[5,6,12,5,4,13,15,7,10,14]
+y=[21,19,24,17,16,25,24,22,21,21]
+data=list(zip(x,y))
+
+kmean = KMeans(n_clusters=2)
+kmean.fit(data)
+centroids = kmean.cluster_centers_
+labels = kmean.labels_
+
+plt.scatter(x,y,c=labels)
+plt.scatter(centroids[:,0],centroids[:,1],s=200,c='darkred')
+
+#AGNES clustering
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram,linkage
+
+singleLinkage = linkage(data,method='single', metric='euclidean')
+dendrogram(singleLinkage)
+plt.title('single Linkage')
+plt.show()
+
+completeLinkage  = linkage(data,method='complete',metric='euclidean')
+dendrogram(completeLinkage)
+plt.title("Complete Linkage")
+plt.show()
+
+agnes = AgglomerativeClustering(n_clusters=2,linkage='complete')
+agnes.fit(data)
+labels = agnes.fit_predict(data)
+print(labels)
+plt.scatter(x,y,c=labels)
