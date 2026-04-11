@@ -259,3 +259,22 @@ agnes.fit(data)
 labels = agnes.fit_predict(data)
 print(labels)
 plt.scatter(x,y,c=labels)
+
+
+#replace outliers
+def replace_outliers(col):
+    Q1 = col.quantile(0.25)
+    Q3 = col.quantile(0.75)
+    IQR = Q3 - Q1
+
+    lower = Q1 - 1.5 * IQR
+    upper = Q3 + 1.5 * IQR
+
+    mean_val = col[(col >= lower) & (col <= upper)].mean()
+
+    return col.apply(lambda x: mean_val if x < lower or x > upper else x)
+
+
+df['num1'] = replace_outliers(df['num1'])
+df['num2'] = replace_outliers(df['num2'])
+df['num3_discrete'] = replace_outliers(df['num3_discrete'])
