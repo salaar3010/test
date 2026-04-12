@@ -1,294 +1,372 @@
 '''
-############################
-# LAB 1 — INTRODUCTION TO R
-############################
-
-c(100,200,300)
-pi
-5^3
-2+(3*5)
-2+3*5
-(2+3)*5
-log(92.13)
-1:15
-1/0
-sqrt(-1)
-
-a=-10
-a
-
-x=as.character(3.46)
-x
-
-paste("First","Second","Third")
-paste("First","Second","Third",sep=":")
-paste("First","Second","Third",sep=".")
-
-m=c(1,2,3,4)
-n=c(1,2,3,4)
-
-m+n
-6*m
-m/3
-2*n+1
-m/n
-
-x=c(4,6,8,9)
-y=c("YES","NO","YES","YES")
-z=c("ims","uds","neni","niti")
-
-df=data.frame(x,y,z)
-df
-
-y=c(TRUE,FALSE,FALSE,TRUE)
-df=data.frame(x,y,z)
-df
-
-mtcars
-mtcars[23,4]
-mtcars["Fiat 128","cyl"]
-
-head(mtcars)
-tail(mtcars)
-head(mtcars,n=7)
-head(mtcars,n=12)
+# --- Visualizations ---
 
 
-############################
-# LAB 2 — DATA VISUALIZATION
-############################
+# --- Sample Data ---
+x = 1:10
+y = c(2,5,3,7,8,6,9,10,12,11)
+category = c("A","B","A","B","A","B","A","B","A","B")
+df = data.frame(x, y, category)
 
-empid=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
-empid
+# --- Basic Plots ---
 
-age=c(30,37,45,32,50,60,35,32,34,43,50,60,78,51,55)
-age
+# 1. Scatter Plot
+plot(x, y, main="Scatter Plot", xlab="X", ylab="Y")
 
-sex=c(0,1,0,1,1,0,1,1,0,0,1,0,1,1,0)
-sex
+# 2. Line Plot
+plot(x, y, type="l", col="blue", main="Line Plot")
 
-status=c(1,1,2,2,1,1,1,2,2,1,2,1,2,1,2)
-status
+# 3. Scatter + Line
+plot(x, y)
+lines(x, y, col="red")
 
-empinfo=data.frame(empid,sex,age,status)
-empinfo
+# 4. Multiple Lines
+y2 = y + 2
+plot(x, y, type="l", col="blue")
+lines(x, y2, col="red")
 
-empinfo$sex=factor(empinfo$sex,labels=c("male","female"))
-empinfo$status=factor(empinfo$status,labels=c("staff","faculty"))
+# --- Bar Plots ---
 
-summary(empid)
-summary(status)
-summary(empinfo)
+# 5. Simple Bar Plot
+barplot(y, main="Bar Plot")
 
-table1=table(empinfo$status)
-table1
+# 6. Named Bar Plot
+barplot(y, names.arg=x, col="skyblue")
 
-table2=table(empinfo$sex,empinfo$status)
-table2
+# 7. Grouped Bar Plot
+mat = matrix(c(5,3,4,6,7,2), nrow=2)
+barplot(mat, beside=TRUE, col=c("blue","red"))
 
-plot(empinfo$age,type="l",main="age of subject",xlab="empid",ylab="age in years",col="red")
+# 8. Stacked Bar Plot
+barplot(mat, col=c("blue","red"))
 
-plot(empinfo$status,type="l",main="status of subjects",xlab="empid",ylab="status",col="blue")
+# --- Pie Chart ---
+pie(table(category), main="Pie Chart")
 
-pie(table2)
-pie(table1)
+# --- Histogram ---
+hist(y, col="lightblue", main="Histogram")
 
-barplot(table2,beside=T,xlim=c(1,15),ylim=c(0,5),col=c("pink","orange"))
-legend("topright",legend=rownames(table2),fill=c("pink","orange"),bty="n")
+# --- Box Plot ---
+boxplot(y, main="Box Plot")
 
-boxplot(empinfo$age-empinfo$status,col=c("pink","orange"))
+# Boxplot with groups
+boxplot(y ~ category, data=df, col=c("pink","lightgreen"))
 
-hist(empinfo$age)
-
-mydata=read.csv("diabetes.csv")
-mydata
-
-data1=read.csv(file.choose())
-summary(data1)
-
-table3=table(data1$Previous.Scores,data1$Sample.Question.Papers.Practiced)
-table3
-
-table4=table(data1$Hours.Studied,data1$Performance.Index)
-plot(table4)
+# --- Density Plot ---
+plot(density(y), main="Density Plot")
 
 
-#############################################
-# LAB 4 — HYPOTHESIS TESTING & CONFIDENCE
-#############################################
+# --- Legends Example ---
+plot(x, y, type="l", col="blue")
+lines(x, y2, col="red")
+legend("topleft", legend=c("y","y2"), col=c("blue","red"), lty=1)
 
-xbar=14.6
-mu0=15.4
-sigma=2.5
-n=35
 
-z=(xbar-mu0)/(sigma/sqrt(n))
+# --- Type Conversion ---
+as.character(4.3)
+as.numeric("5")
+as.factor(x)
 
-alpha=0.05
-zalphahalf=qnorm(1-(alpha/2))
-c(-zalphahalf,zalphahalf)
 
-pval=2*pnorm(z)
 
-if(pval>alpha){
-print("Accept null hypothesis")
-}else{
-print("Reject null hypothesis")
-}
+# --- Data Frame ---
+df = data.frame(col1 = x, col2 = x+1)
+str(df)
+summary(df)
 
-# Problem 2
 
-n=640
-Sampleprop=63/n
-Populationprop=0.1726
-Q=1-Populationprop
 
-z=(Sampleprop-Populationprop)/sqrt(Populationprop*Q/n)
+# --- Accessing Data ---
+df[1,2]
+df$col1
+nrow(df)
+ncol(df)
+head(df)
 
-E=qnorm(.975)
-c(-E,E)
 
-Sampleprop+c(-E,E)*sqrt(Populationprop*(1-Populationprop)/n)
+# --- Factors ---
+df$status = factor(c(1,2,1,2), labels = c("staff","faculty"))
 
-if(z>-E&&z<E){
-print("Hospital is not efficient")
-}else{
-print("Hospital is efficient")
-}
 
-# Two sample mean test
 
-xbar=20
-ybar=15
-n1=500
-n2=400
-sd=4
+# --- Tables ---
+table(df$col1)
+table(df$col1, df$status)
+prop.table(table(df$col1))
 
-z=(xbar-ybar)/(sd*sqrt((1/n1)+(1/n2)))
 
-alpha=0.05
-zalpha1=qnorm(1-(alpha/2))
 
-if(z<=zalpha1){
-print("Accept null hypothesis")
-}else{
-print("Reject null hypothesis")
-}
+# --- Plots ---
+plot(x, x^2, type = "l")
+pie(table(df$col1))
+barplot(table(df$col1))
+boxplot(x ~ df$status)
+hist(x)
 
-# Difference between two proportions
 
-n1=900
-n2=1600
-p1=0.20
-p2=0.185
 
-P=(n1*p1+n2*p2)/(n1+n2)
-Q=1-P
+# --- Sampling ---
+sample(1:50, 5)
+sample(1:6, 10, replace = TRUE)
+sample(c("H","T"), 10, replace = TRUE)
 
-z=(p1-p2)/sqrt(P*Q*((1/n1)+(1/n2)))
 
-alpha=0.05
-zalpha2=qnorm(1-(alpha/2))
 
-if(z<=zalpha2){
-print("accept the null hypothesis")
-}else{
-print("reject null hypothesis")
+# --- Probability ---
+choose(5,2)
+factorial(5)
+dbinom(2,5,0.5)
+dpois(2,3)
+
+
+
+# --- Expectation & Variance ---
+xv = c(0,1,2,3)
+p = c(1/8,3/8,3/8,1/8)
+mean_val = sum(xv*p)
+var_val = sum(xv^2*p) - mean_val^2
+
+
+
+# --- Z-Test (Manual) ---
+xbar = 50
+mu = 45
+sigma = 10
+n = 30
+z = (xbar - mu)/(sigma/sqrt(n))
+alpha = 0.05
+z_crit = qnorm(1 - alpha/2)
+pval = 2 * pnorm(z)
+
+
+
+# --- Z-Test (Built-in) ---
+library(BSDA)
+zsum.test(50, 10, 30)
+
+
+
+# --- Proportion Test ---
+prop.test(30, 100)
+
+
+
+# --- T-Test ---
+sample_data = c(10,12,9,11,10)
+t.test(sample_data)
+
+
+
+# --- Two Sample T-Test ---
+x1 = c(10,12,11)
+x2 = c(9,8,10)
+t.test(x1, x2)
+
+
+
+# --- Paired T-Test ---
+t.test(x1, x2, paired = TRUE)
+
+
+
+# --- Chi-Square Test ---
+mat = matrix(c(10,20,30,40), nrow=2)
+chisq.test(mat)
+
+# --- Variance Test (F-Test) ---
+var(x1)/var(x2)
+qf(1 - alpha, df1=2, df2=2)
+
+# --- Decision Rule ---
+if (pval > alpha) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
 }
 
 
-############################
-# LAB 6 — Z SCORE & P TEST
-############################
 
-mu0=10000
-sigma=120
-n=30
+# =====================================
+# MANUAL STATISTICAL TESTS (ALL TYPES)
+# =====================================
 
-z=(xbar-mu0)/(sigma/sqrt(n))
+alpha = 0.05
 
-alpha=0.05
-zalpha=qnorm(1-alpha)
+# -----------------------------
+# 1. ONE SAMPLE Z-TEST (MEAN)
+# -----------------------------
+xbar = 50
+mu0 = 45
+sigma = 10
+n = 30
 
-pval=pnorm(z)
--zalpha
+z = (xbar - mu0)/(sigma/sqrt(n))
+z_crit = qnorm(1 - alpha/2)
+pval = 2 * pnorm(z)
 
-# Problem 2
+if (abs(z) < z_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
 
-xbar1=2.1
-mu01=2
-sigma2=0.25
-n=35
-alpha=0.05
+# -----------------------------
+# 2. TWO SAMPLE Z-TEST (MEANS)
+# -----------------------------
+xbar1 = 50
+xbar2 = 45
+sigma1 = 10
+sigma2 = 8
+n1 = 30
+n2 = 40
 
-z1=(xbar1-mu01)/(sigma2/sqrt(n))
-zalpha1=qnorm(1-alpha)
+z = (xbar1 - xbar2)/sqrt((sigma1^2/n1) + (sigma2^2/n2))
+z_crit = qnorm(1 - alpha/2)
 
-pval1=pnorm(z1)
-1-pval1
+if (abs(z) < z_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
 
-# Problem 3
+# -----------------------------
+# 3. ONE SAMPLE T-TEST
+# -----------------------------
+x = c(10,12,9,11,10)
 
-xbar3=14.6
-mu03=15.4
-sigma3=2.5
-n=35
+xbar = mean(x)
+s = sd(x)
+n = length(x)
+mu0 = 10
 
-z3=(xbar3-mu03)/(sigma3/sqrt(n))
+t = (xbar - mu0)/(s/sqrt(n))
+t_crit = qt(1 - alpha/2, df=n-1)
 
-alpha=0.05
-zhalfalpha=qnorm(1-(alpha/2))
-c(-zhalfalpha,zhalfalpha)
+if (abs(t) < t_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
 
-pval3=2*pnorm(z3)
+# -----------------------------
+# 4. TWO SAMPLE T-TEST (INDEPENDENT)
+# -----------------------------
+x1 = c(10,12,11)
+x2 = c(9,8,10)
 
-p=85/148
-p0=60/100
-n=148
-q0=1-p0
+n1 = length(x1)
+n2 = length(x2)
 
-z=(p-p0)/sqrt(p0*q0/n)
+xbar1 = mean(x1)
+xbar2 = mean(x2)
 
-alpha=0.05
-zalpha=qnorm(1-alpha)
--zalpha
+s1 = var(x1)
+s2 = var(x2)
 
-pval=pnorm(z)
+t = (xbar1 - xbar2)/sqrt((s1/n1) + (s2/n2))
+t_crit = qt(1 - alpha/2, df=n1+n2-2)
 
-# Problem 4
+if (abs(t) < t_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
 
-p1=30/214
-p0=12/100
-n=214
+# -----------------------------
+# 5. PAIRED T-TEST
+# -----------------------------
+a = c(12,23,5,18,10)
+b = c(18,22,15,21,13)
 
-q0=1-p0
+d = b - a
+n = length(d)
 
-z=(p1-p0)/sqrt(p0*q0/n)
+dbar = mean(d)
+sd = sqrt(var(d))
 
-alpha=0.05
-zalpha=qnorm(1-alpha)
+t = dbar/(sd/sqrt(n))
+t_crit = qt(1 - alpha, df=n-1)
 
-pval=pnorm(z,lower.tail=FALSE)
+if (t < t_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
 
-p=18/30
-p0=1/2
-q0=1-p0
+# -----------------------------
+# 6. ONE PROPORTION Z-TEST
+# -----------------------------
+x = 40
+n = 100
 
-z=(p-p0)/(sqrt(p0*q0/n))
+p_hat = x/n
+p0 = 0.5
+q0 = 1 - p0
 
-alpha=0.05
-zhalfalpha=qnorm(1-(alpha/2))
-c(-zhalfalpha,zhalfalpha)
+z = (p_hat - p0)/sqrt(p0*q0/n)
+z_crit = qnorm(1 - alpha/2)
 
-pval=2*pnorm(z,lower.tail=FALSE)
+if (abs(z) < z_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
 
-p=12/30
-z=(p-p0)/(sqrt(p0*q0/n))
+# -----------------------------
+# 7. TWO PROPORTION Z-TEST
+# -----------------------------
+x1 = 40; n1 = 100
+x2 = 30; n2 = 80
 
-zhalfalpha=qnorm(1-(alpha/2))
-c(-zhalfalpha,zhalfalpha)
+p1 = x1/n1
+p2 = x2/n2
 
-pval=2*pnorm(z,lower.tail=FALSE)
+p = (x1 + x2)/(n1 + n2)
+q = 1 - p
 
+z = (p1 - p2)/sqrt(p*q*(1/n1 + 1/n2))
+z_crit = qnorm(1 - alpha/2)
+
+if (abs(z) < z_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
+
+# -----------------------------
+# 8. CHI-SQUARE TEST
+# -----------------------------
+obs = c(20, 30, 50)
+exp = c(25, 25, 50)
+
+chi = sum((obs - exp)^2/exp)
+df = length(obs) - 1
+
+chi_crit = qchisq(1 - alpha, df)
+
+if (chi < chi_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}
+
+# -----------------------------
+# 9. F-TEST (VARIANCE)
+# -----------------------------
+x = c(10,12,11,13)
+y = c(9,8,10,7)
+
+F = var(x)/var(y)
+
+df1 = length(x)-1
+df2 = length(y)-1
+
+F_crit = qf(1 - alpha, df1, df2)
+
+if (F < F_crit) {
+  print("Accept H0")
+} else {
+  print("Reject H0")
+}  
 
 '''
