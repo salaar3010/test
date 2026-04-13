@@ -350,5 +350,125 @@ model=lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
  k8=ols_step_both_aic(model, details = T)
  k8
  plot(k8)
- 
+
+ # Load library
+library(lmtest)
+
+# Fit regression model
+model = lm(dist ~ speed, data = cars)
+
+# Durbin-Watson Test
+dw = dwtest(model)
+
+dw
+
+# Hypothesis:
+# H0: No autocorrelation in residuals
+# H1: Autocorrelation exists
+
+# Decision using p-value
+if(dw$p.value < 0.05)
+  print("Reject H0: Autocorrelation exists")
+else
+  print("Accept H0: No autocorrelation")
+
+  exp 9 
+  # Load dataset
+data(AirPassengers)
+
+# Basic info
+is.ts(AirPassengers)
+summary(AirPassengers)
+start(AirPassengers)
+end(AirPassengers)
+frequency(AirPassengers)
+
+# Plot time series
+ts.plot(AirPassengers, xlab="Year", ylab="Passengers",
+        main="AirPassengers Time Series")
+
+# Add trend line
+abline(lm(AirPassengers ~ time(AirPassengers)), col="red")
+
+# Autocorrelation
+acf(AirPassengers, main="ACF of AirPassengers")
+
+# ================= AR MODEL =================
+AR = arima(AirPassengers, order=c(1,0,0))
+AR
+
+# Fitted values
+AR_fit = AirPassengers - residuals(AR)
+
+# Plot AR fit
+ts.plot(AirPassengers, main="AR Model Fit")
+lines(AR_fit, col="blue", lwd=2)
+
+# Forecast (next 10 values)
+AR_forecast = predict(AR, n.ahead=10)$pred
+AR_se = predict(AR, n.ahead=10)$se
+
+# Plot forecast
+ts.plot(AirPassengers, xlim=c(1949,1962), main="AR Forecast")
+lines(ts(AR_forecast, start=1961, frequency=12), col="blue", lwd=2)
+lines(ts(AR_forecast + 2*AR_se, start=1961, frequency=12), col="blue", lty=2)
+lines(ts(AR_forecast - 2*AR_se, start=1961, frequency=12), col="blue", lty=2)
+
+# ================= MA MODEL =================
+MA = arima(AirPassengers, order=c(0,0,1))
+MA
+
+# Fitted values
+MA_fit = AirPassengers - residuals(MA)
+
+# Plot MA fit
+ts.plot(AirPassengers, main="MA Model Fit")
+lines(MA_fit, col="red", lwd=2)
+
+# Forecast (next 10 values)
+MA_forecast = predict(MA, n.ahead=10)$pred
+MA_se = predict(MA, n.ahead=10)$se
+
+# Plot forecast
+ts.plot(AirPassengers, xlim=c(1949,1962), main="MA Forecast")
+lines(ts(MA_forecast, start=1961, frequency=12), col="red", lwd=2)
+lines(ts(MA_forecast + 2*MA_se, start=1961, frequency=12), col="red", lty=2)
+lines(ts(MA_forecast - 2*MA_se, start=1961, frequency=12), col="red", lty=2)
+
+# ================= MODEL COMPARISON =================
+cor(AR_fit, MA_fit)
+
+AIC(AR)
+AIC(MA)
+
+BIC(AR)
+BIC(MA)
+
+# exp 10
+#polynomial regression
+hwc = c(0,2,3,4,5,5,5,6,6,5,7,8,9,10,11,12,13,14)
+ts = c(15,20,24,26,30,34,38,40,42,47,53,52,53,49,43,27,22,25)
+
+plot(hwc,ts,col='red')
+
+curve(predict(lm(ts~hwc + I(hwc^2)), data.frame(hwc=x)),
+              add = TRUE, col = 'blue',lwd = 2)
+
+
+#non linear regression
+mydata = data("Puromycin")
+plot(rate ~ conc,data = Puromycin)
+model = nls(rate ~ (a*conc)/(b+conc),data = Puromycin,start = list(a=200,b=0.1))
+curve(predict(model,data.frame(conc = x)),
+              add = TRUE,col='red',lwd=2,xlab = 'conc',ylab='rate')
+
+#non linear regression nlslm
+library(minpack.lm)
+week = 1:16
+mass = c(4,8,12,13,15,18,19,8,21.3,21,22,23,24.3,24.8,25,25.5)
+plot(week,mass)
+
+model2 = nlsLM(mass ~ a*(1- exp(-b*week)),start = list(a=max(mass),b=0.2))
+curve(predict(model2,data.frame(week = x)),add = TRUE)
+
 '''
