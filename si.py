@@ -369,4 +369,40 @@ if (F < F_crit) {
   print("Reject H0")
 }  
 
+# =========================
+# SIGNED TEST (EXPERIMENT 9)
+# =========================
+
+# Data
+data = c(12, 15, 18, 20, 22, 24, 27)
+M0 = 20
+alpha = 0.05
+
+# Remove ties (values equal to M0)
+signs = sign(data - M0)
+signs = signs[signs != 0]
+
+# Test statistic
+S = sum(signs > 0)
+n = length(signs)
+
+# p-value (two-tailed) + fix overflow
+p_value = min(1, 2 * pbinom(min(S, n - S), n, 0.5))
+
+# Output (use cat instead of print)
+cat("Number of positive signs:", S, "\n")
+cat("Sample size (without ties):", n, "\n")
+cat("p-value:", p_value, "\n")
+
+# Decision rule
+if (p_value < alpha) {
+  cat("Conclusion: Reject H0\n")
+  cat("The population median is significantly different from", M0, "\n")
+} else {
+  cat("Conclusion: Accept H0\n")
+  cat("There is no significant evidence that the population median differs from", M0, "\n")
+}
+
+
+
 '''
