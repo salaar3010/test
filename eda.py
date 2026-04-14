@@ -347,3 +347,10 @@ df = pd.DataFrame(data)
 df.to_csv("books_data.csv", index=False)
 
 print("Data saved to books_data.csv")
+
+#pandas imp functions
+df.select_dtypes(include='number')
+df['Glucose'] = pd.to_numeric(df['Glucose'], errors='coerce') # handle errors and missing values
+df['Date'] = pd.to_datetime(df['Date'])
+df['Age'] = df['Age'].astype(int)
+df['Name'] = df['Name'].astype(str)
