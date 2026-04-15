@@ -375,3 +375,17 @@ def remove_outliers(df,col):
 
 df_clean = remove_outliers(df,'BloodPressure')
 
+#binning'
+#binning 
+df['Age_cate'] = ''
+df.loc[df['Age'] > 30,'Age_cate'] ='Young'
+df.loc[(df['Age'] < 30) & (df['Age'] < 50),'Age_cate'] = 'Middle'
+df.head()
+
+#comparision bar graph
+df.groupby('Outcome')[['Glucose','BMI','Age']].mean().plot(kind='bar')
+
+#stacked
+ct  = pd.crosstab(df['Age_cate'],df['Outcome'])
+ct.plot(kind='bar',stacked = True)
+
