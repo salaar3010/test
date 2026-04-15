@@ -1,408 +1,281 @@
-'''
-# --- Visualizations ---
+#exp 10 kruskal test
+x = c(10,11,12,13,14)
+y = c(20,22,25,26,27)
+z = c(33,34,35,36,37)
 
+values = c(x,y,z)
+values
+group = factor(c(
+  rep('x',length(x)),
+  rep('y',length(y)),
+  rep('z',length(z))
+))
+group
 
-# --- Sample Data ---
-x = 1:10
-y = c(2,5,3,7,8,6,9,10,12,11)
-category = c("A","B","A","B","A","B","A","B","A","B")
-df = data.frame(x, y, category)
+kruskal.test(values ~ group)
 
-# --- Basic Plots ---
+boxplot(values ~ group)
 
-# 1. Scatter Plot
-plot(x, y, main="Scatter Plot", xlab="X", ylab="Y")
+rank = rank(values)
+rank
+mean_rank = tapply(rank,group,mean)
+mean_rank
 
-# 2. Line Plot
-plot(x, y, type="l", col="blue", main="Line Plot")
+plot(mean_rank)
+plot(density(x))
+lines(density(y))
+lines(density(z))
 
-# 3. Scatter + Line
-plot(x, y)
-lines(x, y, col="red")
+# exp 9 k-s test Kolmogorov–Smirnov 
+#one sample
 
-# 4. Multiple Lines
-y2 = y + 2
-plot(x, y, type="l", col="blue")
-lines(x, y2, col="red")
+x = c(2.1, 2.5, 3.0, 3.5, 4.0, 2.8, 3.2, 3.7, 2.9, 3.4)
 
-# --- Bar Plots ---
-
-# 5. Simple Bar Plot
-barplot(y, main="Bar Plot")
-
-# 6. Named Bar Plot
-barplot(y, names.arg=x, col="skyblue")
-
-# 7. Grouped Bar Plot
-mat = matrix(c(5,3,4,6,7,2), nrow=2)
-barplot(mat, beside=TRUE, col=c("blue","red"))
-
-# 8. Stacked Bar Plot
-barplot(mat, col=c("blue","red"))
-
-# --- Pie Chart ---
-pie(table(category), main="Pie Chart")
-
-# --- Histogram ---
-hist(y, col="lightblue", main="Histogram")
-
-# --- Box Plot ---
-boxplot(y, main="Box Plot")
-
-# Boxplot with groups
-boxplot(y ~ category, data=df, col=c("pink","lightgreen"))
-
-# --- Density Plot ---
-plot(density(y), main="Density Plot")
-
-
-# --- Legends Example ---
-plot(x, y, type="l", col="blue")
-lines(x, y2, col="red")
-legend("topleft", legend=c("y","y2"), col=c("blue","red"), lty=1)
-
-
-# --- Type Conversion ---
-as.character(4.3)
-as.numeric("5")
-as.factor(x)
-
-
-
-# --- Data Frame ---
-df = data.frame(col1 = x, col2 = x+1)
-str(df)
-summary(df)
-
-
-
-# --- Accessing Data ---
-df[1,2]
-df$col1
-nrow(df)
-ncol(df)
-head(df)
-
-
-# --- Factors ---
-df$status = factor(c(1,2,1,2), labels = c("staff","faculty"))
-
-
-
-# --- Tables ---
-table(df$col1)
-table(df$col1, df$status)
-prop.table(table(df$col1))
-
-
-
-# --- Plots ---
-plot(x, x^2, type = "l")
-pie(table(df$col1))
-barplot(table(df$col1))
-boxplot(x ~ df$status)
+ks.test(x,'pnorm',mean= mean(x), sd = sd(x))
+plot(ecdf(x))
+curve(pnorm(x,mean = mean(x),sd=sd(x)),add = T)
 hist(x)
+curve(dnorm(x,3,1),add = T)
 
+#exp 8
+#median test
 
+a = c(1,2,3,4,5,6,7,8,9,10)
+b = c(3,4,5,6,1,2,7,8,9,10)
+c = c(12,43,23,56,76,22,0,1,2)
+data =c(a,b,c)
 
-# --- Sampling ---
-sample(1:50, 5)
-sample(1:6, 10, replace = TRUE)
-sample(c("H","T"), 10, replace = TRUE)
-
-
-
-# --- Probability ---
-choose(5,2)
-factorial(5)
-dbinom(2,5,0.5)
-dpois(2,3)
-
-
-
-# --- Expectation & Variance ---
-xv = c(0,1,2,3)
-p = c(1/8,3/8,3/8,1/8)
-mean_val = sum(xv*p)
-var_val = sum(xv^2*p) - mean_val^2
-
-
-
-# --- Z-Test (Manual) ---
-xbar = 50
-mu = 45
-sigma = 10
-n = 30
-z = (xbar - mu)/(sigma/sqrt(n))
-alpha = 0.05
-z_crit = qnorm(1 - alpha/2)
-pval = 2 * pnorm(z)
-
-
-
-# --- Z-Test (Built-in) ---
-library(BSDA)
-zsum.test(50, 10, 30)
-
-
-
-# --- Proportion Test ---
-prop.test(30, 100)
-
-
-
-# --- T-Test ---
-sample_data = c(10,12,9,11,10)
-t.test(sample_data)
-
-
-
-# --- Two Sample T-Test ---
-x1 = c(10,12,11)
-x2 = c(9,8,10)
-t.test(x1, x2)
-
-
-
-# --- Paired T-Test ---
-t.test(x1, x2, paired = TRUE)
-
-
-
-# --- Chi-Square Test ---
-mat = matrix(c(10,20,30,40), nrow=2)
-chisq.test(mat)
-
-# --- Variance Test (F-Test) ---
-var(x1)/var(x2)
-qf(1 - alpha, df1=2, df2=2)
-
-# --- Decision Rule ---
-if (pval > alpha) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
-
-
-
-# =====================================
-# MANUAL STATISTICAL TESTS (ALL TYPES)
-# =====================================
+group =factor(c(
+  rep('a',length(a)),
+  rep('b',length(b)),
+  rep('c',length(c))
+))
 
 alpha = 0.05
+median_val = median(data)
+median_val
+tbl = table(group,data > median_val)
+tbl
+test = chisq.test(tbl)
+test
+if(test$p.value < alpha) print("reject H0") else print("Accept H0")
 
-# -----------------------------
-# 1. ONE SAMPLE Z-TEST (MEAN)
-# -----------------------------
-xbar = 50
-mu0 = 45
-sigma = 10
-n = 30
+boxplot(a,b,c)
+plot(density(a))
+lines(density(b))
+lines(density(c))
+hist(a)
+hist(b,add = T)
+hist(c,add = T)
 
-z = (xbar - mu0)/(sigma/sqrt(n))
-z_crit = qnorm(1 - alpha/2)
-pval = 2 * pnorm(z)
+plot(data)
+abline(h = median_val)
 
-if (abs(z) < z_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
+#exp 7 sign test
+data =c(3,5,7,9,11,13)
+mo = 15
+
+signs = sign(data - mo)
+signs
+sings = signs[signs != 0]
+s = sum(sings>0)
+n =length(sings)
+pvalue = binom.test(s,n-s,p = 0.5)
+
+
+if (pvalue$p.value < 0.05) print('Reject H0')
+plot(data)
+abline(h = mo,col = 'red')
+barplot(data)
+x = 0:n
+prob = dbinom(x, n, 0.5)
+
+barplot(prob,
+        names.arg=x,
+        col="skyblue",
+        main="Binomial Distribution",
+        xlab="Positive Signs",
+        ylab="Probability")
+
+#exp 6 categorical cate chi test
+data = matrix(c(40,50,45,55),nrow = 2)
+rownames(data) =c('young','old')
+colnames(data) =c('online shopping','offline')
+
+test = chisq.test(data)
+critical =qchisq(0.95,1)
+if (test$p.value > critical) print("Reject H0") else print("accept H0")
+barplot(data,beside = T)
+
+mosaicplot(data)
+assocplot(data)
+
+#exp5
+n = 4
+N = 160
+p =0.5
+x =0:n
+obf = c(8,16,12,46,10)
+prob = dbinom(x,n,p)
+test =chisq.test(obf,p = prob)
+
+if  (test$p.value < 0.05) print("reject h0") else print('Accept H0')
+y = dchisq(x, df=4)
+
+plot(x, y, type="l", lwd=2,
+     main="Chi-square Distribution")
+
+cv = qchisq(0.95, df=4)
+
+# Shade rejection region
+polygon(c(cv, x[x>=cv], max(x)),
+        c(0, y[x>=cv], 0),
+        col="red")
+
+abline(v=cv, col="blue", lty=2)
+
+#exp 4
+x = rnorm(15, mean=0, sd=sqrt(36))  # s1² = 36
+y = rnorm(12, mean=0, sd=sqrt(16))  # s2² = 16
+
+test = var.test(x, y)
+if(test$p.value < 0.05){
+  "Reject H0"
+}else{
+  "Fail to Reject H0"
 }
+xv = seq(0, 6, length=1000)
+yv = df(xv, df1=14, df2=11)
 
-# -----------------------------
-# 2. TWO SAMPLE Z-TEST (MEANS)
-# -----------------------------
-xbar1 = 50
-xbar2 = 45
-sigma1 = 10
-sigma2 = 8
-n1 = 30
-n2 = 40
+plot(xv, yv, type="l", lwd=2,
+     main="F Distribution")
 
-z = (xbar1 - xbar2)/sqrt((sigma1^2/n1) + (sigma2^2/n2))
-z_crit = qnorm(1 - alpha/2)
+cv = qf(0.95, 14, 11)
 
-if (abs(z) < z_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
+polygon(c(cv, xv[xv>=cv], max(xv)),
+        c(0, yv[xv>=cv], 0),
+        col="red")
 
-# -----------------------------
-# 3. ONE SAMPLE T-TEST
-# -----------------------------
-x = c(10,12,9,11,10)
+abline
 
-xbar = mean(x)
-s = sd(x)
-n = length(x)
-mu0 = 10
+#rest
+# Z test (use t.test if sigma unknown)
+x = rnorm(64, mean=105, sd=15)
+t.test(x, mu=100)
 
-t = (xbar - mu0)/(s/sqrt(n))
-t_crit = qt(1 - alpha/2, df=n-1)
+# 🔹 Visualization
+xv = seq(-4, 4, length=1000)
+yv = dnorm(xv)
 
-if (abs(t) < t_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
+plot(xv, yv, type="l", lwd=2,
+     main="Z Distribution", xlab="Z", ylab="Density")
 
-# -----------------------------
-# 4. TWO SAMPLE T-TEST (INDEPENDENT)
-# -----------------------------
-x1 = c(10,12,11)
-x2 = c(9,8,10)
-
-n1 = length(x1)
-n2 = length(x2)
-
-xbar1 = mean(x1)
-xbar2 = mean(x2)
-
-s1 = var(x1)
-s2 = var(x2)
-
-t = (xbar1 - xbar2)/sqrt((s1/n1) + (s2/n2))
-t_crit = qt(1 - alpha/2, df=n1+n2-2)
-
-if (abs(t) < t_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
-
-# -----------------------------
-# 5. PAIRED T-TEST
-# -----------------------------
-a = c(12,23,5,18,10)
-b = c(18,22,15,21,13)
-
-d = b - a
-n = length(d)
-
-dbar = mean(d)
-sd = sqrt(var(d))
-
-t = dbar/(sd/sqrt(n))
-t_crit = qt(1 - alpha, df=n-1)
-
-if (t < t_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
-
-# -----------------------------
-# 6. ONE PROPORTION Z-TEST
-# -----------------------------
-x = 40
-n = 100
-
-p_hat = x/n
-p0 = 0.5
-q0 = 1 - p0
-
-z = (p_hat - p0)/sqrt(p0*q0/n)
-z_crit = qnorm(1 - alpha/2)
-
-if (abs(z) < z_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
-
-# -----------------------------
-# 7. TWO PROPORTION Z-TEST
-# -----------------------------
-x1 = 40; n1 = 100
-x2 = 30; n2 = 80
-
-p1 = x1/n1
-p2 = x2/n2
-
-p = (x1 + x2)/(n1 + n2)
-q = 1 - p
-
-z = (p1 - p2)/sqrt(p*q*(1/n1 + 1/n2))
-z_crit = qnorm(1 - alpha/2)
-
-if (abs(z) < z_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
-
-# -----------------------------
-# 8. CHI-SQUARE TEST
-# -----------------------------
-obs = c(20, 30, 50)
-exp = c(25, 25, 50)
-
-chi = sum((obs - exp)^2/exp)
-df = length(obs) - 1
-
-chi_crit = qchisq(1 - alpha, df)
-
-if (chi < chi_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}
-
-# -----------------------------
-# 9. F-TEST (VARIANCE)
-# -----------------------------
-x = c(10,12,11,13)
-y = c(9,8,10,7)
-
-F = var(x)/var(y)
-
-df1 = length(x)-1
-df2 = length(y)-1
-
-F_crit = qf(1 - alpha, df1, df2)
-
-if (F < F_crit) {
-  print("Accept H0")
-} else {
-  print("Reject H0")
-}  
-
-# =========================
-# SIGNED TEST (EXPERIMENT 9)
-# =========================
-
-# Data
-data = c(12, 15, 18, 20, 22, 24, 27)
-M0 = 20
 alpha = 0.05
+z_crit = qnorm(1 - alpha/2)
 
-# Remove ties (values equal to M0)
-signs = sign(data - M0)
-signs = signs[signs != 0]
+polygon(c(xv[xv <= -z_crit], -z_crit),
+        c(yv[xv <= -z_crit], 0),
+        col="red")
 
-# Test statistic
-S = sum(signs > 0)
-n = length(signs)
+polygon(c(z_crit, xv[xv >= z_crit]),
+        c(0, yv[xv >= z_crit]),
+        col="red")
 
-# p-value (two-tailed) + fix overflow
-p_value = min(1, 2 * pbinom(min(S, n - S), n, 0.5))
+abline(v=c(-z_crit, z_crit), col="blue", lty=2)
 
-# Output (use cat instead of print)
-cat("Number of positive signs:", S, "\n")
-cat("Sample size (without ties):", n, "\n")
-cat("p-value:", p_value, "\n")
+#T-TEST
+# One-sample t-test
+x = c(1.01,0.97,1.03,1.04,0.99,0.98,0.99,1.01,1.03)
+t.test(x)
 
-# Decision rule
-if (p_value < alpha) {
-  cat("Conclusion: Reject H0\n")
-  cat("The population median is significantly different from", M0, "\n")
-} else {
-  cat("Conclusion: Accept H0\n")
-  cat("There is no significant evidence that the population median differs from", M0, "\n")
-}
+# 🔹 Visualization
+xv = seq(-4, 4, length=1000)
+yv = dt(xv, df=length(x)-1)
+
+plot(xv, yv, type="l", lwd=2,
+     main="t Distribution", xlab="t", ylab="Density")
+
+alpha = 0.05
+t_crit = qt(1 - alpha/2, df=length(x)-1)
+
+polygon(c(xv[xv <= -t_crit], -t_crit),
+        c(yv[xv <= -t_crit], 0),
+        col="red")
+
+polygon(c(t_crit, xv[xv >= t_crit]),
+        c(0, yv[xv >= t_crit]),
+        col="red")
+
+abline(v=c(-t_crit, t_crit), col="blue", lty=2)
+
+#chi
+# Observed data
+obf = c(8,42,68,32,10)
+
+# Expected probabilities
+prob = dbinom(0:4, 4, 0.5)
+
+# Test
+chisq.test(obf, p=prob)
+
+# 🔹 Visualization
+xv = seq(0, 20, length=1000)
+yv = dchisq(xv, df=4)
+
+plot(xv, yv, type="l", lwd=2,
+     main="Chi-square", xlab="Chi-square", ylab="Density")
+
+cv = qchisq(0.95, df=4)
+
+polygon(c(cv, xv[xv>=cv], max(xv)),
+        c(0, yv[xv>=cv], 0),
+        col="red")
+
+abline(v=cv, col="blue", lty=2)
+
+#f
+# Sample data
+x = rnorm(15, sd=sqrt(36))
+y = rnorm(12, sd=sqrt(16))
+
+# Test
+var.test(x, y)
+
+# 🔹 Visualization
+xv = seq(0, 6, length=1000)
+yv = df(xv, df1=14, df2=11)
+
+plot(xv, yv, type="l", lwd=2,
+     main="F Distribution", xlab="F", ylab="Density")
+
+cv = qf(0.95, 14, 11)
+
+polygon(c(cv, xv[xv>=cv], max(xv)),
+        c(0, yv[xv>=cv], 0),
+        col="red")
+
+abline(v=cv, col="blue", lty=2)
 
 
 
-'''
+# prop Test
+prop.test(130, 400, p=0.30)
+
+# 🔹 Visualization (normal approx)
+xv = seq(-4, 4, length=1000)
+yv = dnorm(xv)
+
+plot(xv, yv, type="l", lwd=2,
+     main="Proportion Test", xlab="Z", ylab="Density")
+
+z_crit = qnorm(0.975)
+
+polygon(c(xv[xv <= -z_crit], -z_crit),
+        c(yv[xv <= -z_crit], 0),
+        col="red")
+
+polygon(c(z_crit, xv[xv >= z_crit]),
+        c(0, yv[xv >= z_crit]),
+        col="red")
+
+abline(v=c(-z_crit, z_crit), col="blue", lty=2)
