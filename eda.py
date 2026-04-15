@@ -354,3 +354,24 @@ df['Glucose'] = pd.to_numeric(df['Glucose'], errors='coerce') # handle errors an
 df['Date'] = pd.to_datetime(df['Date'])
 df['Age'] = df['Age'].astype(int)
 df['Name'] = df['Name'].astype(str)
+
+#Normalization
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
+zscore = StandardScaler()
+minmax = MinMaxScaler()
+
+df[['BloodPressure']] = zscore.fit_transform(df[['BloodPressure']])
+
+#outlier removal
+def remove_outliers(df,col):
+    q1=  df[col].quantile(0.25)
+    q3 = df[col].quantile(0.75)
+    iqr = q3 - q1
+    lower = q1 -  1.5*iqr
+    upper = q3 + 1.5*iqr
+
+    return df[(df[col] >= lower) & (df[col] <= upper)]
+
+df_clean = remove_outliers(df,'BloodPressure')
+
