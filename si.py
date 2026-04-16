@@ -97,6 +97,43 @@ barplot(prob,
         xlab="Positive Signs",
         ylab="Probability")
 
+# Data
+before = c(20,22,25,27,30)
+after  = c(23,24,26,29,32)
+
+# Wilcoxon test
+test = wilcox.test(after, before, paired=TRUE)
+
+print(test)
+
+if(test$p.value < 0.05){
+  cat("Reject H0\n")
+} else {
+  cat("Fail to Reject H0\n")
+}
+
+# 🔹 VISUALS
+
+# 1. Scatter plot
+plot(before, after, pch=19, col="blue",
+     xlab="Before", ylab="After",
+     main="Before vs After")
+abline(0,1, col="red", lty=2)
+
+# 2. Boxplot
+boxplot(before, after,
+        names=c("Before","After"),
+        col=c("lightblue","lightgreen"),
+        main="Comparison")
+
+# 3. Differences plot
+d = after - before
+
+dotchart(d,
+         main="Differences",
+         xlab="Difference")
+abline(v=0, col="red", lty=2)
+
 #exp 6 categorical cate chi test
 data = matrix(c(40,50,45,55),nrow = 2)
 rownames(data) =c('young','old')
