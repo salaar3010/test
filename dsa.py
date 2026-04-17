@@ -578,6 +578,128 @@ while arr:
 
 print(sorted_arr)
 
+#bubble sort 
+def bubble(a):
+    n = len(a)
+    for i in range(n):
+        for j in range(n-i-1):
+            if a[j] > a[j+1]:
+                a[j], a[j+1] = a[j+1], a[j]
+    return a
 
+# test
+print(bubble([64,34,25,12,22,11,90]))
+
+#insertion sort 
+def insertion(a):
+    for i in range(1,len(a)):
+        key = a[i]
+        j = i-1
+        while j>=0 and a[j]>key:
+            a[j+1] = a[j]
+            j -= 1
+        a[j+1] = key
+    return a
+
+print(insertion([64,34,25,12,22,11,90]))
+
+#selection sort
+def selection(a):
+    for i in range(len(a)):
+        m = i
+        for j in range(i+1,len(a)):
+            if a[j] < a[m]:
+                m = j
+        a[i], a[m] = a[m], a[i]
+    return a
+
+print(selection([64,34,25,12,22,11,90]))
+
+#AVL 
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+        self.h = 1   # height
+
+
+def height(n):
+    return n.h if n else 0
+
+
+def rotate_right(y):
+    x = y.left
+    T = x.right
+
+    x.right = y
+    y.left = T
+
+    y.h = 1 + max(height(y.left), height(y.right))
+    x.h = 1 + max(height(x.left), height(x.right))
+
+    return x
+
+
+def rotate_left(x):
+    y = x.right
+    T = y.left
+
+    y.left = x
+    x.right = T
+
+    x.h = 1 + max(height(x.left), height(x.right))
+    y.h = 1 + max(height(y.left), height(y.right))
+
+    return y
+
+
+def insert(root, key):
+    if not root:
+        return Node(key)
+
+    if key < root.key:
+        root.left = insert(root.left, key)
+    else:
+        root.right = insert(root.right, key)
+
+    root.h = 1 + max(height(root.left), height(root.right))
+
+    bf = height(root.left) - height(root.right)
+
+    # LL
+    if bf > 1 and key < root.left.key:
+        return rotate_right(root)
+
+    # RR
+    if bf < -1 and key > root.right.key:
+        return rotate_left(root)
+
+    # LR
+    if bf > 1 and key > root.left.key:
+        root.left = rotate_left(root.left)
+        return rotate_right(root)
+
+    # RL
+    if bf < -1 and key < root.right.key:
+        root.right = rotate_right(root.right)
+        return rotate_left(root)
+
+    return root
+
+
+def inorder(root):
+    if root:
+        inorder(root.left)
+        print(root.key, end=" ")
+        inorder(root.right)
+
+
+# TEST
+root = None
+for x in [10, 20, 30, 40, 50, 25]:
+    root = insert(root, x)
+
+inorder(root)
 
 '''
