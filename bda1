@@ -1,0 +1,294 @@
+HADOOP 3.4.1 INSTALLATION ON UBUNTU (PSEUDO-DISTRIBUTED MODE)
+
+==================================================
+
+1. UPDATE UBUNTU
+   ==================================================
+
+sudo apt update
+
+sudo apt upgrade -y
+
+Purpose:
+Updates all installed packages.
+
+==================================================
+2. INSTALL JAVA
+===============
+
+sudo apt install openjdk-11-jdk -y
+
+Purpose:
+Installs Java required for Hadoop.
+
+Verify Java:
+
+java -version
+
+==================================================
+3. INSTALL SSH
+==============
+
+sudo apt install openssh-server openssh-client -y
+
+Purpose:
+Installs SSH required by Hadoop daemons.
+
+Verify SSH:
+
+ssh localhost
+
+==================================================
+4. GENERATE SSH KEY
+===================
+
+ssh-keygen -t rsa -P ""
+
+Press Enter for all prompts.
+
+==================================================
+5. ENABLE PASSWORDLESS SSH
+==========================
+
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+chmod 600 ~/.ssh/authorized_keys
+
+Test:
+
+ssh localhost
+
+exit
+
+Purpose:
+Allows Hadoop services to communicate without password prompts.
+
+==================================================
+6. DOWNLOAD HADOOP
+==================
+
+wget https://downloads.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+
+Purpose:
+Downloads Hadoop package.
+
+==================================================
+7. EXTRACT HADOOP
+=================
+
+tar -xvzf hadoop-3.4.1.tar.gz
+
+Purpose:
+Extracts Hadoop files.
+
+==================================================
+8. RENAME HADOOP DIRECTORY
+==========================
+
+mv hadoop-3.4.1 hadoop
+
+Purpose:
+Simplifies directory name.
+
+==================================================
+9. CONFIGURE ENVIRONMENT VARIABLES
+==================================
+
+nano ~/.bashrc
+
+Add the following lines at the end:
+
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export HADOOP_HOME=$HOME/hadoop
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+Save and exit.
+
+Apply changes:
+
+source ~/.bashrc
+
+==================================================
+10. CONFIGURE hadoop-env.sh
+===========================
+
+nano ~/hadoop/etc/hadoop/hadoop-env.sh
+
+Find JAVA_HOME and set:
+
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+==================================================
+11. CREATE HDFS DIRECTORIES
+===========================
+
+mkdir -p ~/hadoopdata/hdfs/namenode
+
+mkdir -p ~/hadoopdata/hdfs/datanode
+
+Purpose:
+Stores HDFS metadata and blocks.
+
+==================================================
+12. CONFIGURE core-site.xml
+===========================
+
+nano ~/hadoop/etc/hadoop/core-site.xml
+
+Replace content with:
+
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+</configuration>
+
+==================================================
+13. CONFIGURE hdfs-site.xml
+===========================
+
+nano ~/hadoop/etc/hadoop/hdfs-site.xml
+
+Replace content with:
+
+<configuration>
+
+```
+<property>
+    <name>dfs.replication</name>
+    <value>1</value>
+</property>
+
+<property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:///home/ubuntu/hadoopdata/hdfs/namenode</value>
+</property>
+
+<property>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:///home/ubuntu/hadoopdata/hdfs/datanode</value>
+</property>
+```
+
+</configuration>
+
+Note:
+Replace "ubuntu" with your actual username if different.
+
+==================================================
+14. CONFIGURE mapred-site.xml
+=============================
+
+Create file:
+
+nano ~/hadoop/etc/hadoop/mapred-site.xml
+
+Add:
+
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+</configuration>
+
+==================================================
+15. CONFIGURE yarn-site.xml
+===========================
+
+nano ~/hadoop/etc/hadoop/yarn-site.xml
+
+Replace content with:
+
+<configuration>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+</configuration>
+
+==================================================
+16. FORMAT NAMENODE
+===================
+
+hdfs namenode -format
+
+Purpose:
+Initializes HDFS filesystem.
+
+==================================================
+17. START HDFS
+==============
+
+start-dfs.sh
+
+Starts:
+
+* NameNode
+* DataNode
+* SecondaryNameNode
+
+==================================================
+18. START YARN
+==============
+
+start-yarn.sh
+
+Starts:
+
+* ResourceManager
+* NodeManager
+
+==================================================
+19. VERIFY HADOOP SERVICES
+==========================
+
+jps
+
+Expected output:
+
+NameNode
+DataNode
+SecondaryNameNode
+ResourceManager
+NodeManager
+Jps
+
+==================================================
+20. CHECK HADOOP VERSION
+========================
+
+hadoop version
+
+==================================================
+21. HADOOP WEB INTERFACES
+=========================
+
+HDFS Dashboard:
+
+http://localhost:9870
+
+YARN Dashboard:
+
+http://localhost:8088
+
+==================================================
+22. STOP HADOOP
+===============
+
+stop-yarn.sh
+
+stop-dfs.sh
+
+==================================================
+RESULT
+======
+
+Successfully installed and configured Hadoop 3.4.1 in pseudo-distributed mode on Ubuntu Linux.
