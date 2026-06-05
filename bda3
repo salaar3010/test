@@ -1,0 +1,334 @@
+MATRIX MULTIPLICATION USING HADOOP MAPREDUCE
+(Complete Experiment with Commands, Code, Input, Execution and Output)
+
+==================================================
+STEP 1: START HADOOP
+====================
+
+start-dfs.sh
+
+start-yarn.sh
+
+Verify:
+
+jps
+
+Expected:
+
+NameNode
+DataNode
+SecondaryNameNode
+ResourceManager
+NodeManager
+Jps
+
+==================================================
+STEP 2: CREATE PROJECT DIRECTORY
+================================
+
+mkdir ~/MatrixMultiplication
+
+cd ~/MatrixMultiplication
+
+==================================================
+STEP 3: CREATE JAVA FILE
+========================
+
+nano MatrixMultiplication.java
+
+Paste the following code:
+
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class MatrixMultiplication {
+
+```
+public static class MatrixMapper extends Mapper<Object, Text, Text, Text> {
+
+    private Text outputKey = new Text();
+    private Text outputValue = new Text();
+
+    public void map(Object key, Text value, Context context)
+            throws IOException, InterruptedException {
+
+        String[] tokens = value.toString().split(",");
+
+        String matrixName = tokens[0];
+        int row = Integer.parseInt(tokens[1]);
+        int col = Integer.parseInt(tokens[2]);
+        int val = Integer.parseInt(tokens[3]);
+
+        if (matrixName.equals("A")) {
+
+            for (int k = 0; k < 2; k++) {
+
+                outputKey.set(row + "," + k);
+                outputValue.set("A," + col + "," + val);
+
+                context.write(outputKey, outputValue);
+            }
+
+        } else if (matrixName.equals("B")) {
+
+            for (int i = 0; i < 2; i++) {
+
+                outputKey.set(i + "," + col);
+                outputValue.set("B," + row + "," + val);
+
+                context.write(outputKey, outputValue);
+            }
+        }
+    }
+}
+
+public static class MatrixReducer extends Reducer<Text, Text, Text, Text> {
+
+    public void reduce(Text key,
+                       Iterable<Text> values,
+                       Context context)
+            throws IOException, InterruptedException {
+
+        Map<Integer, Integer> matrixA = new HashMap<>();
+        Map<Integer, Integer> matrixB = new HashMap<>();
+
+        for (Text value : values) {
+
+            String[] tokens = value.toString().split(",");
+
+            String matrixName = tokens[0];
+            int index = Integer.parseInt(tokens[1]);
+            int val = Integer.parseInt(tokens[2]);
+
+            if (matrixName.equals("A")) {
+
+                matrixA.put(index, val);
+
+            } else if (matrixName.equals("B")) {
+
+                matrixB.put(index, val);
+            }
+        }
+
+        int result = 0;
+
+        for (int k : matrixA.keySet()) {
+
+            if (matrixB.containsKey(k)) {
+
+                result += matrixA.get(k) * matrixB.get(k);
+            }
+        }
+
+        context.write(key, new Text(Integer.toString(result)));
+    }
+}
+
+public static void main(String[] args) throws Exception {
+
+    Configuration conf = new Configuration();
+
+    Job job = Job.getInstance(conf, "Matrix Multiplication");
+
+    job.setJarByClass(MatrixMultiplication.class);
+
+    job.setMapperClass(MatrixMapper.class);
+    job.setReducerClass(MatrixReducer.class);
+
+    job.setOutputKeyClass(Text.class);
+    job.setOutputValueClass(Text.class);
+
+    FileInputFormat.addInputPath(job,
+            new Path(args[0]));
+
+    FileOutputFormat.setOutputPath(job,
+            new Path(args[1]));
+
+    System.exit(job.waitForCompletion(true) ? 0 : 1);
+}
+```
+
+}
+
+Save:
+
+CTRL + O
+
+Enter
+
+CTRL + X
+
+==================================================
+STEP 4: COMPILE PROGRAM
+=======================
+
+javac -classpath `hadoop classpath` MatrixMultiplication.java
+
+==================================================
+STEP 5: VERIFY CLASS FILES
+==========================
+
+ls
+
+Expected:
+
+MatrixMultiplication.class
+
+MatrixMultiplication$MatrixMapper.class
+
+MatrixMultiplication$MatrixReducer.class
+
+==================================================
+STEP 6: CREATE JAR
+==================
+
+jar cf MatrixMultiplication.jar *.class
+
+==================================================
+STEP 7: VERIFY JAR
+==================
+
+ls
+
+Expected:
+
+MatrixMultiplication.jar
+
+==================================================
+STEP 8: CREATE MATRIX A INPUT FILE
+==================================
+
+nano matrixA.txt
+
+Contents:
+
+A,0,0,1
+A,0,1,2
+A,1,0,3
+A,1,1,4
+
+Save and Exit.
+
+==================================================
+STEP 9: VERIFY MATRIX A
+=======================
+
+cat matrixA.txt
+
+==================================================
+STEP 10: CREATE MATRIX B INPUT FILE
+===================================
+
+nano matrixB.txt
+
+Contents:
+
+B,0,0,5
+B,0,1,6
+B,1,0,7
+B,1,1,8
+
+Save and Exit.
+
+==================================================
+STEP 11: VERIFY MATRIX B
+========================
+
+cat matrixB.txt
+
+==================================================
+STEP 12: CREATE HDFS INPUT DIRECTORY
+====================================
+
+hadoop fs -mkdir /matrixinput
+
+==================================================
+STEP 13: UPLOAD MATRIX FILES
+============================
+
+hadoop fs -put matrixA.txt /matrixinput
+
+hadoop fs -put matrixB.txt /matrixinput
+
+==================================================
+STEP 14: VERIFY HDFS INPUT
+==========================
+
+hadoop fs -ls /matrixinput
+
+Expected:
+
+matrixA.txt
+
+matrixB.txt
+
+==================================================
+STEP 15: RUN MATRIX MULTIPLICATION
+==================================
+
+hadoop jar MatrixMultiplication.jar MatrixMultiplication /matrixinput /matrixoutput
+
+==================================================
+STEP 16: VERIFY OUTPUT DIRECTORY
+================================
+
+hadoop fs -ls /matrixoutput
+
+Expected:
+
+_SUCCESS
+
+part-r-00000
+
+==================================================
+STEP 17: VIEW OUTPUT
+====================
+
+hadoop fs -cat /matrixoutput/part-r-00000
+
+==================================================
+EXPECTED OUTPUT
+===============
+
+0,0    19
+
+0,1    22
+
+1,0    43
+
+1,1    50
+
+==================================================
+STEP 18: DOWNLOAD OUTPUT TO LOCAL SYSTEM
+========================================
+
+hadoop fs -get /matrixoutput result
+
+==================================================
+STEP 19: VIEW DOWNLOADED OUTPUT
+===============================
+
+cat result/part-r-00000
+
+==================================================
+STEP 20: DELETE OUTPUT DIRECTORY BEFORE RE-RUNNING
+==================================================
+
+hadoop fs -rm -r /matrixoutput
+
+==================================================
+STEP 21: STOP HADOOP
+====================
+
+stop-yarn.sh
+
+stop-dfs.sh
