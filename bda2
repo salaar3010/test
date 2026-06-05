@@ -1,0 +1,77 @@
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+
+public class HdfsFileOps {
+
+```
+public static void main(String[] args) throws Exception {
+
+    Configuration conf = new Configuration();
+
+    conf.set("fs.defaultFS", "hdfs://localhost:9000");
+
+    FileSystem fs = FileSystem.get(conf);
+
+    // Create Directory
+    Path dir = new Path("/user/testdir");
+    fs.mkdirs(dir);
+    System.out.println("Directory created");
+
+    // Upload File
+    fs.copyFromLocalFile(
+        new Path("/home/bhaga/sample.txt"),
+        new Path("/user/testdir/sample.txt")
+    );
+    System.out.println("File uploaded");
+
+    // Download File
+    fs.copyToLocalFile(
+        new Path("/user/testdir/sample.txt"),
+        new Path("/home/bhaga/copied.txt")
+    );
+    System.out.println("File downloaded");
+
+    // Delete File
+    fs.delete(
+        new Path("/user/testdir/sample.txt"),
+        false
+    );
+    System.out.println("File deleted");
+
+    // Delete Directory
+    fs.delete(dir, true);
+    System.out.println("Directory deleted");
+
+    fs.close();
+}
+```
+
+}
+
+//Commands to compile and run
+
+Create Java file:
+
+nano HdfsFileOps.java
+
+Compile:
+
+javac -classpath `hadoop classpath` HdfsFileOps.java
+
+Create JAR:
+
+jar cf HdfsFileOps.jar HdfsFileOps.class
+
+Run:
+
+hadoop jar HdfsFileOps.jar HdfsFileOps
+
+Expected Output:
+
+Directory created
+File uploaded
+File downloaded
+File deleted
+Directory deleted
+
