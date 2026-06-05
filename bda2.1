@@ -1,0 +1,160 @@
+HDFS FILE MANAGEMENT USING HADOOP
+(Without Java Program)
+Step 1: Start Hadoop Services
+
+Start HDFS:
+
+start-dfs.sh
+
+Start YARN:
+
+start-yarn.sh
+
+Verify Hadoop services:
+
+jps
+
+Expected Output:
+
+NameNode
+DataNode
+SecondaryNameNode
+ResourceManager
+NodeManager
+Jps
+Step 2: Create a Local File
+
+Create a text file:
+
+nano sample.txt
+
+Enter:
+
+Hello Hadoop
+
+Save and Exit:
+
+CTRL + O
+Enter
+CTRL + X
+
+Verify file:
+
+cat sample.txt
+Step 3: Create Directory in HDFS
+hadoop fs -mkdir /input
+
+Purpose:
+Creates a directory named /input in HDFS.
+
+Step 4: Upload File to HDFS
+hadoop fs -put sample.txt /input/
+
+Purpose:
+Copies local file into HDFS.
+
+Step 5: List Files in HDFS
+hadoop fs -ls /input/
+
+Expected Output:
+
+sample.txt
+Step 6: Read File from HDFS
+hadoop fs -cat /input/sample.txt
+
+Expected Output:
+
+Hello Hadoop
+Step 7: Download File from HDFS
+hadoop fs -get /input/sample.txt downloaded.txt
+
+Verify downloaded file:
+
+cat downloaded.txt
+
+Expected Output:
+
+Hello Hadoop
+Step 8: Delete File from HDFS
+hadoop fs -rm /input/sample.txt
+
+Purpose:
+Deletes file from HDFS.
+
+Step 9: Delete Directory from HDFS
+hadoop fs -rm -r /input
+
+Purpose:
+Deletes directory and its contents.
+
+MULTIPLE FILE OPERATIONS
+
+Step 10: Create Multiple Files
+echo "File 1 data" > file1.txt
+echo "File 2 data" > file2.txt
+echo "File 3 data" > file3.txt
+
+Verify:
+
+ls
+
+Expected:
+
+file1.txt
+file2.txt
+file3.txt
+Step 11: Create HDFS Directory
+hadoop fs -mkdir /multifiles
+Step 12: Upload Multiple Files
+hadoop fs -put file*.txt /multifiles/
+
+Purpose:
+Uploads all text files matching file*.txt.
+
+Step 13: Verify Uploaded Files
+hadoop fs -ls /multifiles
+
+Expected:
+
+file1.txt
+file2.txt
+file3.txt
+
+
+Step 14: Read Individual Files
+hadoop fs -cat /multifiles/file1.txt
+hadoop fs -cat /multifiles/file2.txt
+hadoop fs -cat /multifiles/file3.txt
+Step 15: Read All Files Together
+hadoop fs -cat /multifiles/*
+
+Expected Output:
+
+File 1 data
+File 2 data
+File 3 data
+
+
+Step 16: Download Files
+hadoop fs -get /multifiles/file1.txt
+hadoop fs -get /multifiles/file2.txt
+hadoop fs -get /multifiles/file3.txt
+
+
+Step 17: Delete Files from HDFS
+hadoop fs -rm /multifiles/file1.txt
+hadoop fs -rm /multifiles/file2.txt
+hadoop fs -rm /multifiles/file3.txt
+
+
+Step 18: Delete HDFS Directory
+hadoop fs -rm -r /multifiles
+Step 19: Stop Hadoop Services
+
+Stop YARN:
+
+stop-yarn.sh
+
+Stop HDFS:
+
+stop-dfs.sh
