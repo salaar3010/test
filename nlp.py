@@ -221,9 +221,11 @@ print(word_tokenize(sentences))
 
 
 #regex
-import re
-text = """
-Dr. Siva completed his M.Sc. in Data Science. He scored 9.1 CGPA in the first semester.
+import re 
+
+import nltk
+from nltk.tokenize import sent_tokenize
+text = """Dr. Siva completed his M.Sc. in Data Science. He scored 9.1 CGPA in the first semester.
 Mr. Arun joined later.
 The meeting started at 10.30 a.m. and ended quickly.
 """
@@ -234,5 +236,35 @@ for ab in abb:
     text = text.replace(ab,safe_abb)
 
 Safetext = re.sub(r'(\d+)\.(\d+)',r'\1<decimal>\2',text)
-print(Safetext)
+
+sentences = sent_tokenize(Safetext)
+final =[]
+for sentence in sentences:
+    sentence = sentence.replace("<dot>",".")
+    sentence = sentence.replace("<decimal>",".")
+    final.append(sentence)
+
+print(final)
+
+#np chunk and parsing tree
+import nltk
+from nltk import pos_tag,word_tokenize
+sentence ="The young programmer wrote complex code yesterday in microsoft in chennai"
+tokens = word_tokenize(sentence)
+tags = pos_tag(tokens)
+
+grammar = r"NP: {<DT>?<JJ>*<NN>+}"
+cp = nltk.RegexpParser(grammar)
+tree = cp.parse(tags)
+tree.draw()
+
+#the holonym-meronym relations for 4 nouns
+from nltk.corpus import wordnet as wn 
+noun1 = wn.synsets('car')[0]
+noun2 = wn.synsets('dog')[0]
+noun1.part_holonyms()
+noun2.part_holonyms()
+noun2.part_meronyms()
+noun1.part_meronyms()
+
 
