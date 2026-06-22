@@ -1,0 +1,245 @@
+#activation functions
+
+import torch
+import torch.nn as nn
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Input values
+a_value = torch.linspace(-5, 5, 200)
+
+# Built-in activation functions
+activations = {
+    "Sigmoid": nn.Sigmoid(),
+    "Tanh": nn.Tanh(),
+    "ReLU": nn.ReLU(),
+    "Softmax": nn.Softmax(dim=0),
+    "Softplus": nn.Softplus(),
+    "Leaky ReLU": nn.LeakyReLU()
+}
+
+plt.figure(figsize=(12,10))
+
+for i, (name, func) in enumerate(activations.items(), 1):
+    plt.subplot(2,3,i)
+    y = func(a_value).detach().numpy()
+    plt.plot(a_value.numpy(), y)
+    plt.title(name)
+    plt.grid()
+
+plt.show()
+
+
+#single layer model
+
+#single layer precptron
+import torch
+import torch.nn as nn 
+import numpy as np
+
+#creating input
+x =np.array([1,2,3,4])
+#coverting this into tensors
+tnx = torch.tensor(x,dtype=torch.float32)
+
+#single layer 
+class perceptron(nn.Module):
+  def __init__(self):
+    super().__init__()
+    
+    self.lay1 = nn.Linear(4,2,bias = True)
+    self.act = nn.Softmax(dim=0)
+
+  def forward(self,x):
+    out = self.lay1(x)
+    out = self.act(out)
+    return out
+
+  
+  #creating model
+
+  fn = perceptron()
+
+  weights = np.array([
+      [0.4,0.2],
+      [0.5,0.4],
+      [0.6,0.4],
+      [0.2,0.1]
+  ]).T
+  
+  bais = np.array([0.1,0.5])
+
+  t_weight = torch.tensor(weights,dtype = torch.float32)
+  t_bais = torch.tensor(bais,dtype = torch.float32)
+  fn.lay1.weight.data = t_weight
+  fn.lay1.bias.data = t_bais
+  print(fn(tnx))
+
+
+#multi layer model
+
+#multi-layer 
+import torch 
+import torch.nn as nn
+import numpy
+
+x = np.array([0.1,0.2,0.3,0.4])
+t_x = torch.tensor(x,dtype = torch.float32)
+
+class perceptron_stack(nn.Module):
+  def __init__(self):
+    super().__init__()
+
+    self.lay1=nn.Linear(4,3,bias = True) # 4 input to 3 hidden nodes
+    self.lay2 = nn.Linear(3,2,bias = True) # 3 hidden to 2 output nodes
+
+    self.act1 = nn.Sigmoid()
+    self.act2 = nn.Softmax(dim=0)
+
+  def forward(self,x):
+    out = self.lay1(x)
+    out = self.act1(out)
+    out = self.lay2(out)
+    out = self.act2(out)
+    return out
+
+def l1_l2(x,fn):
+  y = fn(t_x)
+  target = torch.tensor([0.2,0.5])
+  print(f"L1 norm: {torch.norm(y-target,p=1)}")
+  print(f"L2 norm: {torch.norm(y-target,p=2)}")
+
+fn = perceptron_stack()
+weights = np.array([
+      [0.1,0.2,0.3],
+      [0.5,0.6,0.7],
+      [0.9,1.0,1.1],
+      [1.3,1.4,1.5]
+  ]).T # weights for 4 input to 3 hidden nodes
+
+weights2 = np.array([
+      [0.5,1],
+      [0.8,0.2],
+      [0.3,0.1]
+  ]).T # weights for 3hidden nodes to 2 output nodes
+
+t_weights = torch.tensor(weights,dtype = torch.float32)
+t_weights2 = torch.tensor(weights2,dtype = torch.float32)
+
+fn.lay1.weight.data = t_weights
+fn.lay2.weight.data = t_weights2
+
+print(fn(t_x))
+l1_l2(t_x,fn)
+
+#mnist data model
+
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load MNIST dataset
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+
+print(f"x_train shape: {x_train.shape}")
+print(f"y_train shape: {y_train.shape}")
+print(f"x_test shape: {x_test.shape}")
+print(f"y_test shape: {y_test.shape}")
+
+# Normalize images
+x_train = x_train.astype("float32") / 255.0
+x_test = x_test.astype("float32") / 255.0
+
+# Add channel dimension
+x_train = np.expand_dims(x_train, -1)
+x_test = np.expand_dims(x_test, -1)
+
+print(f"x_train shape after reshaping: {x_train.shape}")
+print(f"x_test shape after reshaping: {x_test.shape}")
+
+# Build CNN model
+model = keras.Sequential([
+    keras.Input(shape=(28, 28, 1)),
+    layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Flatten(),
+    layers.Dropout(0.5),
+    layers.Dense(10, activation="softmax"),
+])
+
+# Display model summary
+model.summary()
+
+# Compile model
+model.compile(
+    optimizer="adam",
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"]
+)
+
+# Train model
+batch_size = 128
+epochs = 5
+
+history = model.fit(
+    x_train,
+    y_train,
+    batch_size=batch_size,
+    epochs=epochs,
+    validation_split=0.1
+)
+
+# Evaluate model
+test_loss, test_accuracy = model.evaluate(x_test, y_test, verbose=0)
+
+print("Test loss:", test_loss)
+print("Test accuracy:", test_accuracy)
+
+# Plot Accuracy and Loss
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+# Predict test images
+predictions = model.predict(x_test)
+
+# Display first 25 predictions
+plt.figure(figsize=(10, 10))
+
+for i in range(25):
+    plt.subplot(5, 5, i + 1)
+    plt.imshow(x_test[i].reshape(28, 28), cmap='gray')
+
+    predicted_label = np.argmax(predictions[i])
+    true_label = y_test[i]
+
+    plt.title(
+        f"Pred: {predicted_label}\nTrue: {true_label}",
+        color='green' if predicted_label == true_label else 'red'
+    )
+
+    plt.axis('off')
+
+plt.tight_layout()
+plt.show()
