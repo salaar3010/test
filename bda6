@@ -1,0 +1,207 @@
+PIG PROGRAM - LOAD AND GROUP OPERATION
+======================================
+
+STEP 1: START HADOOP
+====================
+
+start-dfs.sh
+
+start-yarn.sh
+
+Verify:
+
+jps
+
+Expected:
+
+NameNode
+DataNode
+SecondaryNameNode
+ResourceManager
+NodeManager
+Jps
+
+
+STEP 2: CREATE SAMPLE INPUT FILE
+================================
+
+nano sample.txt
+
+Contents:
+
+Hadoop
+Pig
+Hive
+Pig
+Pig
+MapReduce
+
+Save:
+
+CTRL + O
+Enter
+CTRL + X
+
+
+STEP 3: VERIFY FILE
+===================
+
+cat sample.txt
+
+
+Expected:
+
+Hadoop
+Pig
+Hive
+Pig
+Pig
+MapReduce
+
+
+STEP 4: CREATE HDFS INPUT DIRECTORY
+===================================
+
+hadoop fs -mkdir /piginput
+
+
+STEP 5: UPLOAD FILE TO HDFS
+===========================
+
+hadoop fs -put sample.txt /piginput
+
+
+STEP 6: VERIFY HDFS FILE
+========================
+
+hadoop fs -ls /piginput
+
+
+Expected:
+
+sample.txt
+
+
+STEP 7: VIEW FILE IN HDFS
+=========================
+
+hadoop fs -cat /piginput/sample.txt
+
+
+STEP 8: START PIG
+=================
+
+pig
+
+
+Expected:
+
+grunt>
+
+
+STEP 9: LOAD DATA
+=================
+
+A = LOAD '/piginput/sample.txt'
+AS (word:chararray);
+
+
+STEP 10: DISPLAY LOADED DATA
+============================
+
+DUMP A;
+
+
+Expected Output:
+
+(Hadoop)
+(Pig)
+(Hive)
+(Pig)
+(Pig)
+(MapReduce)
+
+
+STEP 11: GROUP DATA
+===================
+
+B = GROUP A BY word;
+
+
+STEP 12: DISPLAY GROUPED DATA
+=============================
+
+DUMP B;
+
+
+Expected Output:
+
+(Hadoop,{(Hadoop)})
+
+(Hive,{(Hive)})
+
+(MapReduce,{(MapReduce)})
+
+(Pig,{(Pig),(Pig),(Pig)})
+
+
+STEP 13: EXIT PIG
+=================
+
+quit;
+
+
+STEP 14: STOP HADOOP
+====================
+
+stop-yarn.sh
+
+stop-dfs.sh
+
+
+VIVA EXPLANATION
+================
+
+LOAD:
+-----
+Reads data from HDFS and stores it in a relation.
+
+Syntax:
+
+A = LOAD '/piginput/sample.txt'
+AS (word:chararray);
+
+
+GROUP:
+------
+Groups records having the same value together.
+
+Syntax:
+
+B = GROUP A BY word;
+
+
+DUMP:
+-----
+Displays the contents of a relation.
+
+Syntax:
+
+DUMP A;
+
+DUMP B;
+
+
+OUTPUT EXPLANATION
+==================
+
+(Hadoop,{(Hadoop)})
+
+Means Hadoop appears once.
+
+(Pig,{(Pig),(Pig),(Pig)})
+
+Means Pig appears three times.
+
+GROUP operation collects all identical values
+into a single group.
