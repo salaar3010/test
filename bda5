@@ -1,0 +1,418 @@
+WORD COUNT USING HADOOP MAPREDUCE (HADOOP 3.x)
+==============================================
+
+STEP 1: START HADOOP
+====================
+
+start-dfs.sh
+
+start-yarn.sh
+
+Verify:
+
+jps
+
+Expected:
+
+NameNode
+DataNode
+SecondaryNameNode
+ResourceManager
+NodeManager
+Jps
+
+
+STEP 2: CREATE PROJECT DIRECTORY
+================================
+
+mkdir ~/wordcount
+
+cd ~/wordcount
+
+
+STEP 3: CREATE MAPPER FILE
+==========================
+
+nano WC_Mapper.java
+
+Paste:
+
+--------------------------------------------------
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WC_Mapper
+extends Mapper<Object, Text, Text, IntWritable> {
+
+    private final static IntWritable one =
+            new IntWritable(1);
+
+    private Text word = new Text();
+
+    public void map(
+            Object key,
+            Text value,
+            Context context)
+            throws IOException, InterruptedException {
+
+        StringTokenizer itr =
+                new StringTokenizer(value.toString());
+
+        while (itr.hasMoreTokens()) {
+
+            word.set(itr.nextToken());
+
+            context.write(word, one);
+        }
+    }
+}
+
+--------------------------------------------------
+
+Save:
+CTRL + O
+Enter
+CTRL + X
+
+
+STEP 4: CREATE REDUCER FILE
+===========================
+
+nano WC_Reducer.java
+
+Paste:
+
+--------------------------------------------------
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class WC_Reducer
+extends Reducer<Text, IntWritable,
+                Text, IntWritable> {
+
+    public void reduce(
+            Text key,
+            Iterable<IntWritable> values,
+            Context context)
+            throws IOException, InterruptedException {
+
+        int sum = 0;
+
+        for (IntWritable val : values) {
+
+            sum += val.get();
+        }
+
+        context.write(
+                key,
+                new IntWritable(sum)
+        );
+    }
+}
+
+--------------------------------------------------
+
+Save:
+CTRL + O
+Enter
+CTRL + X
+
+
+STEP 5: CREATE DRIVER / RUNNER FILE
+===================================
+
+nano WC_Runner.java
+
+Paste:
+
+--------------------------------------------------
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WC_Runner {
+
+    public static void main(String[] args)
+            throws Exception {
+
+        Configuration conf =
+                new Configuration();
+
+        Job job =
+                Job.getInstance(conf,
+                        "Word Count");
+
+        job.setJarByClass(
+                WC_Runner.class);
+
+        job.setMapperClass(
+                WC_Mapper.class);
+
+        job.setReducerClass(
+                WC_Reducer.class);
+
+        job.setOutputKeyClass(
+                Text.class);
+
+        job.setOutputValueClass(
+                IntWritable.class);
+
+        FileInputFormat.addInputPath(
+                job,
+                new Path(args[0]));
+
+        FileOutputFormat.setOutputPath(
+                job,
+                new Path(args[1]));
+
+        System.exit(
+                job.waitForCompletion(true)
+                        ? 0 : 1);
+    }
+}
+
+--------------------------------------------------
+
+Save:
+CTRL + O
+Enter
+CTRL + X
+
+
+STEP 6: COMPILE PROGRAM
+=======================
+
+mkdir -p classes
+
+javac -classpath "$(hadoop classpath)" \
+-d classes \
+WC_Mapper.java WC_Reducer.java WC_Runner.java
+
+
+STEP 7: VERIFY CLASS FILES
+==========================
+
+find classes -name "*.class"
+
+Expected:
+
+WC_Mapper.class
+WC_Reducer.class
+WC_Runner.class
+
+
+STEP 8: CREATE JAR FILE
+=======================
+
+jar -cvf wordcount.jar -C classes/ .
+
+
+STEP 9: VERIFY JAR
+==================
+
+ls
+
+Expected:
+
+wordcount.jar
+
+
+STEP 10: CREATE INPUT FILE
+==========================
+
+nano input.txt
+
+Contents:
+
+Hello Hadoop Hello World
+
+Save:
+CTRL + O
+Enter
+CTRL + X
+
+
+STEP 11: VERIFY INPUT FILE
+==========================
+
+cat input.txt
+
+
+STEP 12: CREATE HDFS INPUT DIRECTORY
+====================================
+
+hadoop fs -mkdir /wordcount
+
+
+STEP 13: UPLOAD INPUT FILE
+==========================
+
+hadoop fs -put input.txt /wordcount
+
+
+STEP 14: VERIFY HDFS INPUT
+==========================
+
+hadoop fs -ls /wordcount
+
+Expected:
+
+input.txt
+
+
+STEP 15: DELETE OLD OUTPUT DIRECTORY
+====================================
+
+hadoop fs -rm -r /wcoutput
+
+(Note: Ignore error if directory does not exist)
+
+
+STEP 16: RUN WORD COUNT
+=======================
+
+hadoop jar wordcount.jar WC_Runner /wordcount /wcoutput
+
+
+STEP 17: VERIFY OUTPUT
+======================
+
+hadoop fs -ls /wcoutput
+
+Expected:
+
+_SUCCESS
+part-r-00000
+
+(or part-00000)
+
+
+STEP 18: VIEW OUTPUT
+====================
+
+hadoop fs -cat /wcoutput/part-*
+
+
+EXPECTED OUTPUT
+===============
+
+Hadoop 1
+Hello 2
+World 1
+
+
+STEP 19: DOWNLOAD OUTPUT
+========================
+
+hadoop fs -get /wcoutput result
+
+
+STEP 20: VIEW DOWNLOADED OUTPUT
+===============================
+
+cat result/part-*
+
+
+MULTIPLE FILE WORD COUNT
+========================
+
+Create:
+
+nano file1.txt
+
+Contents:
+
+Hadoop Pig Hive
+
+
+Create:
+
+nano file2.txt
+
+Contents:
+
+Pig Hadoop MapReduce
+
+
+Upload:
+
+hadoop fs -put file1.txt /wordcount
+
+hadoop fs -put file2.txt /wordcount
+
+
+Verify:
+
+hadoop fs -ls /wordcount
+
+
+Delete old output:
+
+hadoop fs -rm -r /wcoutput
+
+
+Run again:
+
+hadoop jar wordcount.jar WC_Runner /wordcount /wcoutput
+
+
+View output:
+
+hadoop fs -cat /wcoutput/part-*
+
+
+STEP 21: STOP HADOOP
+====================
+
+stop-yarn.sh
+
+stop-dfs.sh
+
+
+VIVA EXPLANATION
+================
+
+Mapper:
+Reads each word and outputs:
+
+(word,1)
+
+Example:
+
+Hello Hadoop Hello
+
+Mapper Output:
+
+(Hello,1)
+(Hadoop,1)
+(Hello,1)
+
+
+Reducer:
+Receives all values for the same word and adds them.
+
+Example:
+
+Hello -> 1,1
+
+Reducer Output:
+
+Hello -> 2
+
+
+Final Output:
+Displays each word and its frequency count.
