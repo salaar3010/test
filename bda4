@@ -1,0 +1,418 @@
+K-MEANS CLUSTERING USING HADOOP MAPREDUCE (HADOOP 3.x)
+=====================================================
+
+STEP 1: START HADOOP
+====================
+
+start-dfs.sh
+
+start-yarn.sh
+
+Verify:
+
+jps
+
+Expected:
+
+NameNode
+DataNode
+SecondaryNameNode
+ResourceManager
+NodeManager
+Jps
+
+
+STEP 2: CREATE PROJECT DIRECTORY
+================================
+
+mkdir ~/kmeans
+
+cd ~/kmeans
+
+
+STEP 3: CREATE JAVA FILE
+========================
+
+nano KMeans.java
+
+Paste:
+
+--------------------------------------------------
+
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class KMeans {
+
+    public static class KMeansMapper
+    extends Mapper<LongWritable, Text,
+                   IntWritable, Text> {
+
+        private static List<double[]> centroids =
+                new ArrayList<double[]>();
+
+        @Override
+        protected void setup(Context context)
+                throws IOException, InterruptedException {
+
+            centroids.add(new double[]{1.0, 1.0});
+            centroids.add(new double[]{5.0, 7.0});
+        }
+
+        @Override
+        public void map(LongWritable key,
+                        Text value,
+                        Context context)
+                throws IOException, InterruptedException {
+
+            String[] parts =
+                    value.toString().split(",");
+
+            double x =
+                    Double.parseDouble(parts[0]);
+
+            double y =
+                    Double.parseDouble(parts[1]);
+
+            int nearest = 0;
+            double minDist =
+                    Double.MAX_VALUE;
+
+            for (int i = 0;
+                 i < centroids.size();
+                 i++) {
+
+                double dist =
+                        Math.pow(
+                                x - centroids.get(i)[0],
+                                2)
+                        +
+                        Math.pow(
+                                y - centroids.get(i)[1],
+                                2);
+
+                if (dist < minDist) {
+
+                    minDist = dist;
+                    nearest = i;
+                }
+            }
+
+            context.write(
+                    new IntWritable(nearest),
+                    value);
+        }
+    }
+
+    public static class KMeansReducer
+    extends Reducer<IntWritable, Text,
+                    IntWritable, Text> {
+
+        @Override
+        public void reduce(
+                IntWritable key,
+                Iterable<Text> values,
+                Context context)
+                throws IOException, InterruptedException {
+
+            double sumX = 0;
+            double sumY = 0;
+            int count = 0;
+
+            for (Text val : values) {
+
+                String[] parts =
+                        val.toString().split(",");
+
+                sumX +=
+                        Double.parseDouble(parts[0]);
+
+                sumY +=
+                        Double.parseDouble(parts[1]);
+
+                count++;
+            }
+
+            double newX =
+                    sumX / count;
+
+            double newY =
+                    sumY / count;
+
+            context.write(
+                    key,
+                    new Text(
+                            newX + "," + newY
+                    ));
+        }
+    }
+
+    public static void main(String[] args)
+            throws Exception {
+
+        Configuration conf =
+                new Configuration();
+
+        Job job =
+                Job.getInstance(
+                        conf,
+                        "KMeans");
+
+        job.setJarByClass(
+                KMeans.class);
+
+        job.setMapperClass(
+                KMeansMapper.class);
+
+        job.setReducerClass(
+                KMeansReducer.class);
+
+        job.setOutputKeyClass(
+                IntWritable.class);
+
+        job.setOutputValueClass(
+                Text.class);
+
+        FileInputFormat.addInputPath(
+                job,
+                new Path(args[0]));
+
+        FileOutputFormat.setOutputPath(
+                job,
+                new Path(args[1]));
+
+        System.exit(
+                job.waitForCompletion(true)
+                        ? 0 : 1);
+    }
+}
+
+--------------------------------------------------
+
+Save:
+
+CTRL + O
+Enter
+CTRL + X
+
+
+STEP 4: COMPILE PROGRAM
+=======================
+
+mkdir -p classes
+
+javac -classpath "$(hadoop classpath)" \
+-d classes \
+KMeans.java
+
+
+STEP 5: VERIFY CLASS FILES
+==========================
+
+find classes -name "*.class"
+
+Expected:
+
+KMeans.class
+KMeans$KMeansMapper.class
+KMeans$KMeansReducer.class
+
+
+STEP 6: CREATE JAR FILE
+=======================
+
+jar -cvf KMeans.jar -C classes/ .
+
+
+STEP 7: VERIFY JAR
+==================
+
+ls
+
+Expected:
+
+KMeans.jar
+
+
+STEP 8: CREATE INPUT FILE
+=========================
+
+nano points.txt
+
+Contents:
+
+1,1
+1.5,2
+3,4
+5,7
+3.5,5
+4.5,5
+3.5,4.5
+
+Save:
+
+CTRL + O
+Enter
+CTRL + X
+
+
+STEP 9: VERIFY INPUT FILE
+=========================
+
+cat points.txt
+
+
+STEP 10: CREATE HDFS DIRECTORY
+==============================
+
+hadoop fs -mkdir /input
+
+hadoop fs -mkdir /input/kmeans
+
+
+STEP 11: UPLOAD INPUT FILE
+==========================
+
+hadoop fs -put points.txt /input/kmeans
+
+
+STEP 12: VERIFY HDFS INPUT
+==========================
+
+hadoop fs -ls /input/kmeans
+
+Expected:
+
+points.txt
+
+
+STEP 13: VIEW INPUT FILE IN HDFS
+================================
+
+hadoop fs -cat /input/kmeans/points.txt
+
+
+STEP 14: DELETE OLD OUTPUT
+==========================
+
+hadoop fs -rm -r /output/kmeans
+
+(Note:
+Ignore error if directory does not exist)
+
+
+STEP 15: RUN K-MEANS
+====================
+
+hadoop jar KMeans.jar KMeans /input/kmeans /output/kmeans
+
+
+STEP 16: VERIFY OUTPUT
+======================
+
+hadoop fs -ls /output/kmeans
+
+Expected:
+
+_SUCCESS
+part-r-00000
+
+
+STEP 17: VIEW OUTPUT
+====================
+
+hadoop fs -cat /output/kmeans/part-*
+
+
+EXPECTED OUTPUT
+===============
+
+0    1.25,1.5
+
+1    4.125,5.375
+
+
+Explanation:
+
+Cluster 0 Centroid:
+(1.25 , 1.5)
+
+Cluster 1 Centroid:
+(4.125 , 5.375)
+
+
+STEP 18: DOWNLOAD OUTPUT
+========================
+
+hadoop fs -get /output/kmeans result
+
+
+STEP 19: VIEW DOWNLOADED OUTPUT
+===============================
+
+cat result/part-*
+
+
+STEP 20: STOP HADOOP
+====================
+
+stop-yarn.sh
+
+stop-dfs.sh
+
+
+VIVA EXPLANATION
+================
+
+K-Means Clustering:
+-------------------
+K-Means is an unsupervised machine learning algorithm
+used to group similar data points into clusters.
+
+Mapper:
+-------
+Calculates the distance of each point from all centroids.
+
+Assigns the point to the nearest centroid.
+
+Example:
+
+Point:
+3,4
+
+Nearest Cluster:
+Cluster 1
+
+Mapper Output:
+
+(1,3,4)
+
+
+Reducer:
+--------
+Receives all points belonging to the same cluster.
+
+Calculates:
+
+New Centroid X =
+Sum of X values / Number of Points
+
+New Centroid Y =
+Sum of Y values / Number of Points
+
+Reducer Output:
+
+Cluster ID -> New Centroid
+
+
+Final Output:
+-------------
+Displays the new centroid coordinates
+for each cluster.
